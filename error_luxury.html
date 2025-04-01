@@ -1,0 +1,253 @@
+{% extends 'base_luxury.html' %}
+
+{% block title %}Error {{ error_code }} | LuxeSeeker{% endblock %}
+
+{% block extra_css %}
+<style>
+    .billion-error-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 70vh;
+        padding: 3rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .billion-error-code {
+        font-size: 12rem;
+        font-weight: 900;
+        line-height: 1;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, var(--billion-red) 30%, var(--billion-burgundy));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+        text-shadow: 0 0 30px rgba(215, 38, 56, 0.5);
+        position: relative;
+        z-index: 1;
+    }
+    
+    .billion-error-title {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        color: var(--billion-white);
+        text-align: center;
+    }
+    
+    .billion-error-message {
+        font-size: 1.2rem;
+        font-weight: 400;
+        margin-bottom: 3rem;
+        color: var(--billion-platinum);
+        max-width: 600px;
+        text-align: center;
+        line-height: 1.8;
+    }
+    
+    .billion-home-btn {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--billion-cyan), var(--billion-electric));
+        color: var(--billion-black);
+        font-weight: 600;
+        padding: 1rem 2.5rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
+        box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        text-decoration: none;
+    }
+    
+    .billion-home-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 255, 255, 0.4);
+        color: var(--billion-black);
+    }
+    
+    .billion-error-glow {
+        position: absolute;
+        top: -20%;
+        left: -10%;
+        width: 700px;
+        height: 700px;
+        background: radial-gradient(circle, rgba(215, 38, 56, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        filter: blur(100px);
+        z-index: 0;
+        pointer-events: none;
+    }
+    
+    .billion-error-grid {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        background-size: 30px 30px;
+        z-index: -1;
+        pointer-events: none;
+    }
+    
+    .billion-error-code::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(215, 38, 56, 0.15) 0%, transparent 70%);
+        border-radius: 50%;
+        z-index: -1;
+    }
+    
+    @media (max-width: 768px) {
+        .billion-error-code {
+            font-size: 8rem;
+        }
+        
+        .billion-error-title {
+            font-size: 2rem;
+        }
+    }
+    
+    /* Animation for floating elements */
+    .float-animation {
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-20px);
+        }
+        100% {
+            transform: translateY(0px);
+        }
+    }
+    
+    .glitch-animation {
+        animation: glitch 3s linear infinite;
+    }
+    
+    @keyframes glitch {
+        0% {
+            text-shadow: 0.05em 0 0 rgba(255,0,0,0.5), -0.05em -0.025em 0 rgba(0,255,255,0.5);
+        }
+        14% {
+            text-shadow: 0.05em 0 0 rgba(255,0,0,0.5), -0.05em -0.025em 0 rgba(0,255,255,0.5);
+        }
+        15% {
+            text-shadow: -0.05em -0.025em 0 rgba(255,0,0,0.5), 0.025em 0.025em 0 rgba(0,255,255,0.5);
+        }
+        49% {
+            text-shadow: -0.05em -0.025em 0 rgba(255,0,0,0.5), 0.025em 0.025em 0 rgba(0,255,255,0.5);
+        }
+        50% {
+            text-shadow: 0.025em 0.05em 0 rgba(255,0,0,0.5), 0.05em 0 0 rgba(0,255,255,0.5);
+        }
+        99% {
+            text-shadow: 0.025em 0.05em 0 rgba(255,0,0,0.5), 0.05em 0 0 rgba(0,255,255,0.5);
+        }
+        100% {
+            text-shadow: -0.025em 0 0 rgba(255,0,0,0.5), -0.025em -0.025em 0 rgba(0,255,255,0.5);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="billion-error-container">
+    <div class="billion-error-glow"></div>
+    <div class="billion-error-grid"></div>
+    
+    <div class="billion-error-code float-animation glitch-animation">{{ error_code }}</div>
+    
+    <h1 class="billion-error-title">
+        {% if error_code == 404 %}
+            Page Not Found
+        {% elif error_code == 500 %}
+            Internal Server Error
+        {% else %}
+            {{ error_message }}
+        {% endif %}
+    </h1>
+    
+    <p class="billion-error-message">
+        {% if error_code == 404 %}
+            The luxury experience you're looking for has been moved or doesn't exist. Our concierge team has been notified.
+        {% elif error_code == 500 %}
+            We've encountered an unexpected issue. Our elite technical team has been dispatched to resolve this matter with the utmost urgency.
+        {% else %}
+            {{ error_message }}
+        {% endif %}
+    </p>
+    
+    <a href="{{ url_for('luxury_index') }}" class="billion-home-btn">
+        <i class="fas fa-home me-2"></i> Return to Luxury Home
+    </a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add entry animation for elements
+        const errorContainer = document.querySelector('.billion-error-container');
+        const errorCode = document.querySelector('.billion-error-code');
+        const errorTitle = document.querySelector('.billion-error-title');
+        const errorMessage = document.querySelector('.billion-error-message');
+        const homeBtn = document.querySelector('.billion-home-btn');
+        
+        // Apply initial styles
+        [errorCode, errorTitle, errorMessage, homeBtn].forEach(el => {
+            if (el) {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+            }
+        });
+        
+        // Animate elements in sequence
+        setTimeout(() => {
+            if (errorCode) {
+                errorCode.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                errorCode.style.opacity = '1';
+                errorCode.style.transform = 'translateY(0)';
+            }
+        }, 300);
+        
+        setTimeout(() => {
+            if (errorTitle) {
+                errorTitle.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                errorTitle.style.opacity = '1';
+                errorTitle.style.transform = 'translateY(0)';
+            }
+        }, 500);
+        
+        setTimeout(() => {
+            if (errorMessage) {
+                errorMessage.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                errorMessage.style.opacity = '1';
+                errorMessage.style.transform = 'translateY(0)';
+            }
+        }, 700);
+        
+        setTimeout(() => {
+            if (homeBtn) {
+                homeBtn.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                homeBtn.style.opacity = '1';
+                homeBtn.style.transform = 'translateY(0)';
+            }
+        }, 900);
+    });
+</script>
+{% endblock %}

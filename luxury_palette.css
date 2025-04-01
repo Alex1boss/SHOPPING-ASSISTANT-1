@@ -1,0 +1,242 @@
+/* Billion-Dollar Luxury UI Color Palette */
+:root {
+    /* Primary Colors */
+    --billion-black: #0D0D0D;       /* Obsidian Black - Deep luxury, premium elegance */
+    --billion-white: #F5F5F5;       /* Ultra-White - Clean, modern, high-contrast */
+    --billion-grey: #1C1C1E;        /* Carbon Grey - Smooth dark UI base */
+    
+    /* Accent Colors */
+    --billion-blue: #173F5F;        /* Sapphire Blue - Futuristic, deep, and elegant */
+    --billion-green: #0F9D58;       /* Emerald Green - Wealth, premium touch */
+    --billion-red: #D72638;         /* Ruby Red - Bold, luxury emphasis */
+    --billion-platinum: #B0B0B0;    /* Platinum Grey - Subtle sophistication */
+    --billion-purple: #4B0082;      /* Midnight Purple - Royal luxury, elite branding */
+    
+    /* Premium UI Enhancement Colors */
+    --billion-cyan: #00FFFF;        /* Neon Cyan - AI-driven glow effects */
+    --billion-electric: #007BFF;    /* Electric Blue - High-class, modern pop */
+    --billion-burgundy: #800020;    /* Royal Burgundy - Heritage & premium luxury */
+    --billion-gold: #FFD700;        /* Solar Yellow - Highlights & luxury deal alerts */
+    
+    /* Platform Colors */
+    --amazon-color: #FF9900;
+    --walmart-color: #0071DC;
+    --bestbuy-color: #0046BE;
+    --target-color: #CC0000;
+    --ebay-color: #E53238;
+    
+    /* Gradients */
+    --billion-gradient-main: linear-gradient(135deg, var(--billion-grey), var(--billion-blue));
+    --billion-gradient-accent: linear-gradient(135deg, var(--billion-blue), var(--billion-purple));
+    --billion-gradient-gold: linear-gradient(135deg, var(--billion-gold), #E6C200);
+    --billion-gradient-glass: linear-gradient(135deg, rgba(176, 176, 176, 0.1), rgba(0, 255, 255, 0.05));
+    --billion-gradient-carbon-sapphire: linear-gradient(135deg, var(--billion-grey), var(--billion-blue));
+    --billion-gradient-premium: linear-gradient(90deg, var(--billion-black), var(--billion-grey), var(--billion-black));
+    
+    /* Shadows */
+    --billion-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
+    --billion-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    --billion-shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.3);
+    --billion-glow: 0 0 15px rgba(0, 255, 255, 0.3);
+    --billion-glow-green: 0 0 15px rgba(15, 157, 88, 0.4);
+    --billion-glow-red: 0 0 15px rgba(215, 38, 56, 0.4);
+    --billion-glow-gold: 0 0 15px rgba(255, 215, 0, 0.4);
+    
+    /* Borders */
+    --billion-border: 1px solid rgba(255, 255, 255, 0.05);
+    --billion-border-accent: 1px solid rgba(0, 255, 255, 0.2);
+    --billion-border-green: 1px solid rgba(15, 157, 88, 0.2);
+    --billion-border-red: 1px solid rgba(215, 38, 56, 0.2);
+    --billion-border-gold: 1px solid rgba(255, 215, 0, 0.2);
+    
+    /* Backgrounds */
+    --billion-bg-dark: linear-gradient(135deg, rgba(13, 13, 13, 0.97), rgba(28, 28, 30, 0.97));
+    --billion-bg-pattern: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none"/><path d="M0 50 L50 0 L100 50 L50 100 Z" fill="rgba(0,255,255,0.02)"/></svg>');
+}
+
+/* Glass Morphism Effects */
+.billion-glass {
+    background: rgba(28, 28, 30, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: var(--billion-border);
+    box-shadow: var(--billion-shadow);
+}
+
+.billion-glass-accent {
+    background: rgba(23, 63, 95, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: var(--billion-border-accent);
+    box-shadow: var(--billion-glow);
+}
+
+.billion-glass-green {
+    background: rgba(15, 157, 88, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: var(--billion-border-green);
+    box-shadow: var(--billion-glow-green);
+}
+
+.billion-glass-red {
+    background: rgba(215, 38, 56, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: var(--billion-border-red);
+    box-shadow: var(--billion-glow-red);
+}
+
+.billion-glass-gold {
+    background: rgba(255, 215, 0, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: var(--billion-border-gold);
+    box-shadow: var(--billion-glow-gold);
+}
+
+/* Animations */
+@keyframes billion-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(0, 255, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 255, 0);
+    }
+}
+
+@keyframes billion-float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+@keyframes billion-glow {
+    0% {
+        filter: drop-shadow(0 0 2px rgba(0, 255, 255, 0.3));
+    }
+    50% {
+        filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.8));
+    }
+    100% {
+        filter: drop-shadow(0 0 2px rgba(0, 255, 255, 0.3));
+    }
+}
+
+@keyframes billion-shine {
+    0% {
+        background-position: -200% center;
+    }
+    100% {
+        background-position: 200% center;
+    }
+}
+
+@keyframes billion-rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes billion-pop {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.billion-pulse {
+    animation: billion-pulse 2s infinite;
+}
+
+.billion-float {
+    animation: billion-float 6s ease-in-out infinite;
+}
+
+.billion-glow {
+    animation: billion-glow 3s ease-in-out infinite;
+}
+
+.billion-shine {
+    position: relative;
+    overflow: hidden;
+}
+
+.billion-shine::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(30deg);
+    animation: billion-shine 3s infinite linear;
+    pointer-events: none;
+}
+
+.billion-rotate {
+    animation: billion-rotate 10s linear infinite;
+}
+
+.billion-pop {
+    animation: billion-pop 2s ease-in-out infinite;
+}
+
+/* Transitions */
+.billion-transition {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.billion-transition-long {
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Typography */
+.billion-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--billion-white) 60%, var(--billion-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+.billion-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    color: var(--billion-platinum);
+    letter-spacing: 0.5px;
+}
+
+.billion-text-gradient {
+    background: linear-gradient(135deg, var(--billion-white) 30%, var(--billion-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}

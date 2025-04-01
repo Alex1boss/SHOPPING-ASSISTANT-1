@@ -1,0 +1,330 @@
+{% extends 'base_mobile.html' %}
+
+{% block title %}{{ product.name }} - ShopAI{% endblock %}
+
+{% block content %}
+<div class="p-3">
+    <!-- Product Image -->
+    <div class="text-center mb-3">
+        {% if product.image_url %}
+        <img src="{{ product.image_url }}" class="img-fluid rounded product-main-image" style="max-height: 300px;" alt="{{ product.name }}">
+        {% else %}
+        <div class="product-image-placeholder bg-light d-flex align-items-center justify-content-center rounded" style="height: 300px;">
+            <i class="fas fa-image fa-3x text-muted"></i>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Product Info -->
+    <div class="product-info mb-4">
+        {% if product.platform %}
+        <div class="platform-badge mb-2">
+            <span class="badge bg-light text-dark">
+                <i class="fas {% if product.platform == 'amazon' %}fa-amazon{% elif product.platform == 'walmart' %}fa-shopping-cart{% elif product.platform == 'bestbuy' %}fa-laptop{% elif product.platform == 'target' %}fa-bullseye{% elif product.platform == 'ebay' %}fa-exchange-alt{% else %}fa-store{% endif %} me-1"></i>
+                {{ product.platform }}
+            </span>
+        </div>
+        {% endif %}
+        
+        <h1 class="product-title fs-4 mb-2">{{ product.name }}</h1>
+        
+        <!-- Rating -->
+        {% if product.rating %}
+        <div class="product-rating mb-3">
+            <span class="stars">
+                {% for i in range(5) %}
+                    {% if i < product.rating|int %}
+                        <i class="fas fa-star text-warning"></i>
+                    {% elif i < (product.rating|float) and i >= (product.rating|int) %}
+                        <i class="fas fa-star-half-alt text-warning"></i>
+                    {% else %}
+                        <i class="far fa-star text-warning"></i>
+                    {% endif %}
+                {% endfor %}
+            </span>
+            <span class="ms-1">{{ product.rating }} {% if product.review_count %}({{ product.review_count }} reviews){% endif %}</span>
+        </div>
+        {% endif %}
+        
+        <!-- Price -->
+        <div class="product-price-container mb-3">
+            <div class="d-flex align-items-center">
+                <h2 class="product-price fw-bold mb-0 me-2">{% if product.price %}₹{{ "%.2f"|format(product.price) }}{% elif product.price_range %}{{ product.price_range }}{% endif %}</h2>
+                {% if product.original_price and product.original_price > product.price %}
+                <span class="product-original-price text-decoration-line-through text-muted">₹{{ "%.2f"|format(product.original_price) }}</span>
+                {% endif %}
+            </div>
+            
+            {% if product.discount_percent and product.discount_percent > 0 %}
+            <div class="discount-badge badge bg-danger mt-2">{{ product.discount_percent }}% OFF</div>
+            {% endif %}
+        </div>
+        
+        <!-- Stock and Delivery -->
+        <div class="product-availability mb-3">
+            {% if product.in_stock %}
+            <div class="text-success mb-1">
+                <i class="fas fa-check-circle me-1"></i> In Stock
+            </div>
+            {% else %}
+            <div class="text-danger mb-1">
+                <i class="fas fa-times-circle me-1"></i> Out of Stock
+            </div>
+            {% endif %}
+            
+            {% if product.delivery_time %}
+            <div class="delivery-info">
+                <i class="fas fa-shipping-fast text-primary me-1"></i> {{ product.delivery_time }}
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons mb-4">
+            <div class="d-grid gap-2">
+                {% if product.product_url %}
+                <a href="{{ product.product_url }}" class="btn btn-primary" target="_blank">
+                    <i class="fas fa-shopping-cart me-2"></i> Buy Now
+                </a>
+                {% endif %}
+                
+                <button class="btn btn-outline-primary">
+                    <i class="far fa-heart me-2"></i> Add to Wishlist
+                </button>
+                
+                <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#shareModal">
+                    <i class="fas fa-share-alt me-2"></i> Share
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Product Tabs -->
+    <div class="product-tabs mb-4">
+        <ul class="nav nav-tabs" id="productTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="true">Description</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="features-tab" data-bs-toggle="tab" data-bs-target="#features" type="button" role="tab" aria-controls="features" aria-selected="false">Features</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button" role="tab" aria-controls="specs" aria-selected="false">Specifications</button>
+            </li>
+        </ul>
+        
+        <div class="tab-content p-3 border border-top-0 rounded-bottom" id="productTabsContent">
+            <!-- Description Tab -->
+            <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                <p>{{ product.description }}</p>
+            </div>
+            
+            <!-- Features Tab -->
+            <div class="tab-pane fade" id="features" role="tabpanel" aria-labelledby="features-tab">
+                {% if product.key_features %}
+                <ul class="list-group list-group-flush">
+                    {% for feature in product.key_features %}
+                    <li class="list-group-item px-0">
+                        <i class="fas fa-check-circle text-success me-2"></i> {{ feature }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted">No features available for this product.</p>
+                {% endif %}
+            </div>
+            
+            <!-- Specifications Tab -->
+            <div class="tab-pane fade" id="specs" role="tabpanel" aria-labelledby="specs-tab">
+                {% if product.specifications %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <tbody>
+                            {% for key, value in product.specifications.items() %}
+                            <tr>
+                                <th style="width: 40%;">{{ key }}</th>
+                                <td>{{ value }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No specifications available for this product.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Deal Score -->
+    {% if product.deal_score %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-chart-line text-primary me-2"></i> Deal Score</h5>
+        </div>
+        <div class="card-body">
+            <div class="d-flex align-items-center mb-2">
+                <div class="progress flex-grow-1 me-3" style="height: 24px;">
+                    <div class="progress-bar {% if product.deal_score >= 80 %}bg-success{% elif product.deal_score >= 60 %}bg-primary{% elif product.deal_score >= 40 %}bg-warning{% else %}bg-danger{% endif %}" 
+                         role="progressbar" style="width: {{ product.deal_score }}%;" 
+                         aria-valuenow="{{ product.deal_score }}" aria-valuemin="0" aria-valuemax="100">
+                        {{ product.deal_score }}/100
+                    </div>
+                </div>
+                <span class="fw-bold fs-4">{{ product.deal_score }}</span>
+            </div>
+            
+            <p class="mb-0">
+                {% if product.deal_score >= 80 %}
+                <i class="fas fa-thumbs-up text-success me-1"></i> <strong>Excellent deal!</strong> This is one of the best offers available right now.
+                {% elif product.deal_score >= 60 %}
+                <i class="fas fa-check text-primary me-1"></i> <strong>Good deal.</strong> The price and value are better than average.
+                {% elif product.deal_score >= 40 %}
+                <i class="fas fa-info-circle text-warning me-1"></i> <strong>Average deal.</strong> Not bad, but there might be better options.
+                {% else %}
+                <i class="fas fa-thumbs-down text-danger me-1"></i> <strong>Below average.</strong> You might want to look for better deals.
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Similar Products -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-tags me-2"></i> Similar Products</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="similar-products-slider px-3 py-3" style="overflow-x: auto; white-space: nowrap; scrollbar-width: none; display: flex; gap: 15px;">
+                <!-- Similar Product 1 -->
+                <div class="similar-product-card" style="min-width: 140px; max-width: 140px;">
+                    <img src="https://via.placeholder.com/140x140?text=Similar+1" class="img-fluid rounded mb-2" alt="Similar Product">
+                    <h6 style="white-space: normal; font-size: 0.8rem; height: 32px; overflow: hidden;">Similar Wireless Headphones</h6>
+                    <div class="fw-bold">₹249.99</div>
+                </div>
+                
+                <!-- Similar Product 2 -->
+                <div class="similar-product-card" style="min-width: 140px; max-width: 140px;">
+                    <img src="https://via.placeholder.com/140x140?text=Similar+2" class="img-fluid rounded mb-2" alt="Similar Product">
+                    <h6 style="white-space: normal; font-size: 0.8rem; height: 32px; overflow: hidden;">Premium Earbuds with Case</h6>
+                    <div class="fw-bold">₹199.99</div>
+                </div>
+                
+                <!-- Similar Product 3 -->
+                <div class="similar-product-card" style="min-width: 140px; max-width: 140px;">
+                    <img src="https://via.placeholder.com/140x140?text=Similar+3" class="img-fluid rounded mb-2" alt="Similar Product">
+                    <h6 style="white-space: normal; font-size: 0.8rem; height: 32px; overflow: hidden;">Noise Cancelling Headset</h6>
+                    <div class="fw-bold">₹349.99</div>
+                </div>
+                
+                <!-- Similar Product 4 -->
+                <div class="similar-product-card" style="min-width: 140px; max-width: 140px;">
+                    <img src="https://via.placeholder.com/140x140?text=Similar+4" class="img-fluid rounded mb-2" alt="Similar Product">
+                    <h6 style="white-space: normal; font-size: 0.8rem; height: 32px; overflow: hidden;">Sports Bluetooth Earphones</h6>
+                    <div class="fw-bold">₹129.99</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Share Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="shareModalLabel">Share This Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-around">
+                    <a href="#" class="btn btn-outline-primary"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="btn btn-outline-info"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="btn btn-outline-success"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" class="btn btn-outline-danger"><i class="fab fa-pinterest"></i></a>
+                    <a href="#" class="btn btn-outline-secondary"><i class="far fa-envelope"></i></a>
+                </div>
+                
+                <div class="mt-3">
+                    <label for="shareLink" class="form-label">Link to Product</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="shareLink" value="{{ request.url }}" readonly>
+                        <button class="btn btn-outline-secondary" type="button" id="copyLinkBtn">Copy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Image zoom functionality
+        const productImage = document.querySelector('.product-main-image');
+        if (productImage) {
+            productImage.addEventListener('click', function() {
+                const modal = document.createElement('div');
+                modal.className = 'modal fade';
+                modal.id = 'imageZoomModal';
+                modal.setAttribute('tabindex', '-1');
+                modal.setAttribute('aria-hidden', 'true');
+                
+                modal.innerHTML = `
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-body p-0">
+                                <button type="button" class="btn-close position-absolute top-0 end-0 p-3 bg-white rounded-circle" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <img src="${this.src}" class="img-fluid w-100" alt="Zoomed image">
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                const modalInstance = new bootstrap.Modal(modal);
+                modalInstance.show();
+                
+                modal.addEventListener('hidden.bs.modal', function() {
+                    document.body.removeChild(modal);
+                });
+            });
+        }
+        
+        // Copy link button
+        const copyLinkBtn = document.getElementById('copyLinkBtn');
+        if (copyLinkBtn) {
+            copyLinkBtn.addEventListener('click', function() {
+                const shareLinkInput = document.getElementById('shareLink');
+                shareLinkInput.select();
+                document.execCommand('copy');
+                
+                // Change button text temporarily
+                const originalText = this.innerHTML;
+                this.innerHTML = 'Copied!';
+                this.classList.remove('btn-outline-secondary');
+                this.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-outline-secondary');
+                }, 2000);
+            });
+        }
+        
+        // Similar products slider
+        const similarProductsSlider = document.querySelector('.similar-products-slider');
+        if (similarProductsSlider) {
+            const cards = similarProductsSlider.querySelectorAll('.similar-product-card');
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Navigate to product page (in a real app this would link to the product)
+                    window.location.href = '/product/2';  // Example product ID
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

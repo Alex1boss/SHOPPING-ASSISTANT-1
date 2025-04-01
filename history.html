@@ -1,0 +1,383 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}Search History - ShopAI{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <header class="app-header">
+        <div class="back-button" onclick="history.back()">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <h1 class="page-title">Your Search History</h1>
+    </header>
+
+    <div class="history-container">
+        {% if history %}
+            <div class="history-actions">
+                <button id="clear-history-btn" class="clear-history-button">
+                    <i class="fas fa-trash-alt"></i> Clear History
+                </button>
+            </div>
+            
+            <div class="history-list" id="history-list">
+                {% for query in history %}
+                    <div class="history-item" data-id="{{ query.id }}">
+                        <div class="history-item-content">
+                            <div class="history-query">
+                                <a href="{{ url_for('search_api', query=query.query_text, search_type=query.search_type) }}" class="query-link">
+                                    {{ query.query_text }}
+                                </a>
+                                
+                                <div class="query-meta">
+                                    <span class="query-time">{{ query.formatted_date() }}</span>
+                                    <span class="query-type">
+                                        {% if query.search_type == 'super_deal' %}
+                                            <i class="fas fa-fire"></i> Super Deal
+                                        {% elif query.search_type == 'all_deals' %}
+                                            <i class="fas fa-tags"></i> All Deals
+                                        {% else %}
+                                            <i class="fas fa-search"></i> Search
+                                        {% endif %}
+                                    </span>
+                                    
+                                    {% if query.is_luxury %}
+                                        <span class="query-luxury">
+                                            <i class="fas fa-gem"></i> Luxury
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="history-actions">
+                                <button class="delete-history-item" data-id="{{ query.id }}">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        {% if query.recommendations and query.recommendations|length > 0 %}
+                            <div class="history-recommendations">
+                                <div class="recommendation-scroll">
+                                    {% for product in query.recommendations %}
+                                        <div class="mini-product-card">
+                                            {% if product.image_url %}
+                                                <div class="mini-product-image">
+                                                    <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                                                </div>
+                                            {% else %}
+                                                <div class="mini-product-image mini-product-placeholder">
+                                                    <i class="fas fa-box"></i>
+                                                </div>
+                                            {% endif %}
+                                            
+                                            <div class="mini-product-info">
+                                                <div class="mini-product-name">{{ product.name }}</div>
+                                                <div class="mini-product-price">{{ format_price(product.price) }}</div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-history"></i>
+                <p>Your search history is empty. Start searching to keep track of your product discoveries!</p>
+                <a href="{{ url_for('index') }}" class="start-shopping-button">
+                    Start Shopping
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Delete individual history item
+        const deleteButtons = document.querySelectorAll('.delete-history-item');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const itemId = this.getAttribute('data-id');
+                if (confirm('Remove this item from your history?')) {
+                    // Send request to delete the item
+                    fetch(`/api/history/${itemId}`, {
+                        method: 'DELETE',
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove the item from the DOM
+                            const historyItem = document.querySelector(`.history-item[data-id="${itemId}"]`);
+                            historyItem.style.height = historyItem.offsetHeight + 'px';
+                            setTimeout(() => {
+                                historyItem.style.height = '0';
+                                historyItem.style.opacity = '0';
+                                setTimeout(() => {
+                                    historyItem.remove();
+                                    // Check if history is empty
+                                    if (document.querySelectorAll('.history-item').length === 0) {
+                                        location.reload(); // Reload to show empty state
+                                    }
+                                }, 300);
+                            }, 10);
+                        } else {
+                            alert('Failed to delete history item. Please try again.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred. Please try again.');
+                    });
+                }
+            });
+        });
+        
+        // Clear all history
+        const clearHistoryBtn = document.getElementById('clear-history-btn');
+        if (clearHistoryBtn) {
+            clearHistoryBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Are you sure you want to clear your entire search history?')) {
+                    // Send request to clear all history
+                    fetch('/api/history/clear', {
+                        method: 'DELETE',
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload(); // Reload to show empty state
+                        } else {
+                            alert('Failed to clear history. Please try again.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred. Please try again.');
+                    });
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .history-container {
+        padding: 20px;
+    }
+    
+    .history-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 20px;
+    }
+    
+    .clear-history-button {
+        background-color: #f8f8f8;
+        color: #666;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+    .clear-history-button:hover {
+        background-color: #f0f0f0;
+    }
+    
+    .clear-history-button i {
+        margin-right: 5px;
+        color: #ff6b6b;
+    }
+    
+    .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .history-item {
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transition: height 0.3s ease, opacity 0.3s ease;
+    }
+    
+    .history-item-content {
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    
+    .history-query {
+        flex: 1;
+    }
+    
+    .query-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1.1rem;
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    .query-link:hover {
+        text-decoration: underline;
+    }
+    
+    .query-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 0.8rem;
+        color: #777;
+    }
+    
+    .query-time, .query-type, .query-luxury {
+        display: flex;
+        align-items: center;
+    }
+    
+    .query-type i, .query-luxury i {
+        margin-right: 3px;
+    }
+    
+    .query-luxury i {
+        color: #cc9933;
+    }
+    
+    .history-actions {
+        margin-left: 10px;
+    }
+    
+    .delete-history-item {
+        background: none;
+        border: none;
+        color: #999;
+        cursor: pointer;
+        font-size: 0.9rem;
+        padding: 5px;
+        border-radius: 50%;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    .delete-history-item:hover {
+        background-color: #f0f0f0;
+        color: #ff6b6b;
+    }
+    
+    .history-recommendations {
+        padding: 0 15px 15px 15px;
+    }
+    
+    .recommendation-scroll {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        gap: 10px;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .recommendation-scroll::-webkit-scrollbar {
+        height: 4px;
+    }
+    
+    .recommendation-scroll::-webkit-scrollbar-thumb {
+        background-color: rgba(0,0,0,0.1);
+        border-radius: 2px;
+    }
+    
+    .mini-product-card {
+        flex: 0 0 auto;
+        width: 120px;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: #f8f8f8;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .mini-product-image {
+        height: 80px;
+        overflow: hidden;
+    }
+    
+    .mini-product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .mini-product-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #eee;
+        color: #999;
+    }
+    
+    .mini-product-placeholder i {
+        font-size: 1.5rem;
+    }
+    
+    .mini-product-info {
+        padding: 8px;
+    }
+    
+    .mini-product-name {
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-bottom: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .mini-product-price {
+        font-size: 0.8rem;
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: #ccc;
+    }
+    
+    .empty-state p {
+        margin-bottom: 20px;
+    }
+    
+    .start-shopping-button {
+        display: inline-block;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: 500;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,795 @@
+{% extends 'base_luxury.html' %}
+
+{% block title %}Luxury Categories | LuxeSeeker{% endblock %}
+
+{% block extra_css %}
+<style>
+    .billion-categories-hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 40vh;
+        padding: 4rem 0;
+        position: relative;
+        overflow: hidden;
+        background: var(--billion-gradient-dark);
+        border-bottom: var(--billion-border);
+    }
+    
+    .billion-categories-glow {
+        position: absolute;
+        top: -20%;
+        right: -10%;
+        width: 700px;
+        height: 700px;
+        background: radial-gradient(circle, rgba(0, 119, 255, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        filter: blur(80px);
+        z-index: 0;
+        pointer-events: none;
+    }
+    
+    .billion-categories-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        color: var(--billion-white);
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .billion-categories-subtitle {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        color: var(--billion-platinum);
+        max-width: 700px;
+        text-align: center;
+        margin-bottom: 3rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .billion-search-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .billion-search-bar {
+        width: 100%;
+        padding: 1.2rem 2rem;
+        padding-left: 4rem;
+        border-radius: 50px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--billion-white);
+        font-size: 1.1rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .billion-search-bar:focus {
+        outline: none;
+        border-color: var(--billion-cyan);
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 15px 40px rgba(0, 255, 255, 0.1);
+    }
+    
+    .billion-search-icon {
+        position: absolute;
+        left: 1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--billion-cyan);
+        font-size: 1.2rem;
+    }
+    
+    .billion-category-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 4rem 0;
+    }
+    
+    .billion-category-card {
+        position: relative;
+        height: 300px;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        background: var(--billion-gradient-dark);
+        border: var(--billion-border);
+    }
+    
+    .billion-category-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--billion-shadow-lg);
+        border-color: rgba(0, 255, 255, 0.2);
+    }
+    
+    .billion-category-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+        opacity: 0.5;
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .billion-category-card:hover .billion-category-bg {
+        transform: scale(1.05);
+        opacity: 0.7;
+    }
+    
+    .billion-category-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 30%, transparent);
+        z-index: 1;
+    }
+    
+    .billion-category-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 2rem;
+        z-index: 2;
+    }
+    
+    .billion-category-name {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--billion-white);
+    }
+    
+    .billion-category-count {
+        font-size: 1rem;
+        color: var(--billion-platinum);
+        margin-bottom: 1.5rem;
+    }
+    
+    .billion-category-btn {
+        display: inline-block;
+        padding: 0.8rem 1.5rem;
+        border-radius: 50px;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--billion-white);
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .billion-category-btn:hover {
+        background: var(--billion-cyan);
+        color: var(--billion-black);
+        border-color: var(--billion-cyan);
+    }
+    
+    .billion-category-icon {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-radius: 50%;
+        color: var(--billion-white);
+        font-size: 1.2rem;
+        z-index: 2;
+        transition: all 0.3s ease;
+    }
+    
+    .billion-category-card:hover .billion-category-icon {
+        background: var(--billion-cyan);
+        color: var(--billion-black);
+    }
+    
+    .billion-trending-section {
+        padding: 3rem 0;
+        background: var(--billion-gradient-dark);
+        border-top: var(--billion-border);
+        border-bottom: var(--billion-border);
+        margin: 3rem 0;
+    }
+    
+    .billion-trending-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 3rem;
+        color: var(--billion-white);
+        text-align: center;
+    }
+    
+    .billion-trending-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 2rem;
+    }
+    
+    .billion-trending-card {
+        background: rgba(0, 0, 0, 0.3);
+        border: var(--billion-border);
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .billion-trending-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--billion-shadow-lg);
+        border-color: rgba(0, 255, 255, 0.1);
+    }
+    
+    .billion-trending-img {
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: var(--billion-border);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .billion-trending-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .billion-trending-card:hover .billion-trending-img img {
+        transform: scale(1.05);
+    }
+    
+    .billion-trending-badge {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        background: rgba(215, 38, 56, 0.9);
+        color: white;
+        font-weight: 600;
+        padding: 0.3rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+    }
+    
+    .billion-trending-content {
+        padding: 1.5rem;
+    }
+    
+    .billion-trending-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--billion-white);
+        line-height: 1.4;
+    }
+    
+    .billion-trending-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .billion-trending-searches {
+        font-size: 0.9rem;
+        color: var(--billion-platinum);
+        display: flex;
+        align-items: center;
+    }
+    
+    .billion-trending-searches i {
+        margin-right: 0.5rem;
+        color: var(--billion-cyan);
+    }
+    
+    .billion-trending-change {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--billion-green);
+        display: flex;
+        align-items: center;
+    }
+    
+    .billion-trending-change i {
+        margin-right: 0.3rem;
+    }
+    
+    .billion-trending-change.up {
+        color: var(--billion-green);
+    }
+    
+    .billion-trending-change.down {
+        color: var(--billion-red);
+    }
+    
+    .billion-collection-section {
+        padding: 4rem 0;
+    }
+    
+    .billion-collection-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+    
+    .billion-collection-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        color: var(--billion-white);
+    }
+    
+    .billion-collection-subtitle {
+        font-size: 1.1rem;
+        color: var(--billion-platinum);
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .billion-collection-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 300px);
+        gap: 2rem;
+    }
+    
+    .billion-collection-item {
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        border: var(--billion-border);
+    }
+    
+    .billion-collection-item:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--billion-shadow-lg);
+        border-color: rgba(0, 255, 255, 0.2);
+    }
+    
+    .billion-collection-item:nth-child(1) {
+        grid-column: 1 / 3;
+        grid-row: 1 / 2;
+    }
+    
+    .billion-collection-item:nth-child(2) {
+        grid-column: 3 / 4;
+        grid-row: 1 / 3;
+    }
+    
+    .billion-collection-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .billion-collection-item:hover .billion-collection-img {
+        transform: scale(1.05);
+    }
+    
+    .billion-collection-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 30%, transparent);
+        z-index: 1;
+    }
+    
+    .billion-collection-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 2rem;
+        z-index: 2;
+    }
+    
+    .billion-collection-name {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+        color: var(--billion-white);
+    }
+    
+    .billion-collection-desc {
+        font-size: 1rem;
+        color: var(--billion-platinum);
+        margin-bottom: 1.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .billion-collection-btn {
+        display: inline-block;
+        padding: 0.8rem 1.5rem;
+        border-radius: 50px;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--billion-white);
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .billion-collection-btn:hover {
+        background: var(--billion-gradient-blue);
+        color: var(--billion-black);
+        border-color: transparent;
+    }
+    
+    /* Media queries */
+    @media (max-width: 992px) {
+        .billion-collection-grid {
+            grid-template-columns: 1fr;
+            grid-template-rows: repeat(3, 300px);
+        }
+        
+        .billion-collection-item:nth-child(1),
+        .billion-collection-item:nth-child(2) {
+            grid-column: 1;
+            grid-row: auto;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .billion-categories-title {
+            font-size: 2.5rem;
+        }
+        
+        .billion-categories-subtitle {
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="billion-categories-hero">
+    <div class="billion-categories-glow"></div>
+    
+    <h1 class="billion-categories-title">Explore Premium Categories</h1>
+    <p class="billion-categories-subtitle">Discover curated collections of exceptional products across luxury categories, hand-selected for discerning tastes.</p>
+    
+    <div class="billion-search-container">
+        <form action="/search" method="get">
+            <i class="fas fa-search billion-search-icon"></i>
+            <input type="text" class="billion-search-bar" name="query" placeholder="Search across all categories...">
+            <input type="hidden" name="luxury" value="true">
+        </form>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Categories Grid -->
+    <div class="billion-category-grid">
+        <!-- Electronics Category -->
+        <div class="billion-category-card">
+            <img src="https://via.placeholder.com/600x400?text=Electronics" alt="Electronics" class="billion-category-bg">
+            <div class="billion-category-overlay"></div>
+            <div class="billion-category-icon">
+                <i class="fas fa-laptop"></i>
+            </div>
+            <div class="billion-category-content">
+                <h3 class="billion-category-name">Electronics</h3>
+                <p class="billion-category-count">8,540+ Premium Products</p>
+                <a href="/search?query=premium+electronics&luxury=true" class="billion-category-btn">
+                    Explore Category
+                </a>
+            </div>
+        </div>
+        
+        <!-- Fashion Category -->
+        <div class="billion-category-card">
+            <img src="https://via.placeholder.com/600x400?text=Fashion" alt="Fashion" class="billion-category-bg">
+            <div class="billion-category-overlay"></div>
+            <div class="billion-category-icon">
+                <i class="fas fa-tshirt"></i>
+            </div>
+            <div class="billion-category-content">
+                <h3 class="billion-category-name">Fashion</h3>
+                <p class="billion-category-count">12,230+ Luxury Items</p>
+                <a href="/search?query=luxury+fashion&luxury=true" class="billion-category-btn">
+                    Explore Category
+                </a>
+            </div>
+        </div>
+        
+        <!-- Home & Kitchen Category -->
+        <div class="billion-category-card">
+            <img src="https://via.placeholder.com/600x400?text=Home" alt="Home & Kitchen" class="billion-category-bg">
+            <div class="billion-category-overlay"></div>
+            <div class="billion-category-icon">
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="billion-category-content">
+                <h3 class="billion-category-name">Home & Kitchen</h3>
+                <p class="billion-category-count">7,850+ Elite Products</p>
+                <a href="/search?query=premium+home+kitchen&luxury=true" class="billion-category-btn">
+                    Explore Category
+                </a>
+            </div>
+        </div>
+        
+        <!-- Beauty Category -->
+        <div class="billion-category-card">
+            <img src="https://via.placeholder.com/600x400?text=Beauty" alt="Beauty" class="billion-category-bg">
+            <div class="billion-category-overlay"></div>
+            <div class="billion-category-icon">
+                <i class="fas fa-spa"></i>
+            </div>
+            <div class="billion-category-content">
+                <h3 class="billion-category-name">Beauty & Personal Care</h3>
+                <p class="billion-category-count">5,640+ Premium Products</p>
+                <a href="/search?query=luxury+beauty+care&luxury=true" class="billion-category-btn">
+                    Explore Category
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sports & Outdoors Category -->
+        <div class="billion-category-card">
+            <img src="https://via.placeholder.com/600x400?text=Sports" alt="Sports & Outdoors" class="billion-category-bg">
+            <div class="billion-category-overlay"></div>
+            <div class="billion-category-icon">
+                <i class="fas fa-running"></i>
+            </div>
+            <div class="billion-category-content">
+                <h3 class="billion-category-name">Sports & Outdoors</h3>
+                <p class="billion-category-count">4,320+ High-End Items</p>
+                <a href="/search?query=premium+sports+equipment&luxury=true" class="billion-category-btn">
+                    Explore Category
+                </a>
+            </div>
+        </div>
+        
+        <!-- Automotive Category -->
+        <div class="billion-category-card">
+            <img src="https://via.placeholder.com/600x400?text=Automotive" alt="Automotive" class="billion-category-bg">
+            <div class="billion-category-overlay"></div>
+            <div class="billion-category-icon">
+                <i class="fas fa-car"></i>
+            </div>
+            <div class="billion-category-content">
+                <h3 class="billion-category-name">Automotive</h3>
+                <p class="billion-category-count">3,180+ Luxury Accessories</p>
+                <a href="/search?query=premium+automotive+accessories&luxury=true" class="billion-category-btn">
+                    Explore Category
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Trending Categories Section -->
+<div class="billion-trending-section">
+    <div class="container">
+        <h2 class="billion-trending-title">Trending Now</h2>
+        
+        <div class="billion-trending-grid">
+            <!-- Trending Item 1 -->
+            <div class="billion-trending-card">
+                <div class="billion-trending-img">
+                    <img src="https://via.placeholder.com/300x200?text=Smart+Watches" alt="Smart Watches">
+                    <div class="billion-trending-badge">HOT</div>
+                </div>
+                <div class="billion-trending-content">
+                    <h3 class="billion-trending-name">Smart Watches</h3>
+                    <div class="billion-trending-meta">
+                        <div class="billion-trending-searches">
+                            <i class="fas fa-search"></i> 28.5K searches
+                        </div>
+                        <div class="billion-trending-change up">
+                            <i class="fas fa-arrow-up"></i> 34%
+                        </div>
+                    </div>
+                    <a href="/search?query=premium+smart+watches&luxury=true" class="billion-recom-btn">View Products</a>
+                </div>
+            </div>
+            
+            <!-- Trending Item 2 -->
+            <div class="billion-trending-card">
+                <div class="billion-trending-img">
+                    <img src="https://via.placeholder.com/300x200?text=Wireless+Earbuds" alt="Wireless Earbuds">
+                    <div class="billion-trending-badge">HOT</div>
+                </div>
+                <div class="billion-trending-content">
+                    <h3 class="billion-trending-name">Wireless Earbuds</h3>
+                    <div class="billion-trending-meta">
+                        <div class="billion-trending-searches">
+                            <i class="fas fa-search"></i> 25.7K searches
+                        </div>
+                        <div class="billion-trending-change up">
+                            <i class="fas fa-arrow-up"></i> 28%
+                        </div>
+                    </div>
+                    <a href="/search?query=premium+wireless+earbuds&luxury=true" class="billion-recom-btn">View Products</a>
+                </div>
+            </div>
+            
+            <!-- Trending Item 3 -->
+            <div class="billion-trending-card">
+                <div class="billion-trending-img">
+                    <img src="https://via.placeholder.com/300x200?text=Smart+Home" alt="Smart Home">
+                </div>
+                <div class="billion-trending-content">
+                    <h3 class="billion-trending-name">Smart Home Devices</h3>
+                    <div class="billion-trending-meta">
+                        <div class="billion-trending-searches">
+                            <i class="fas fa-search"></i> 22.3K searches
+                        </div>
+                        <div class="billion-trending-change up">
+                            <i class="fas fa-arrow-up"></i> 18%
+                        </div>
+                    </div>
+                    <a href="/search?query=premium+smart+home+devices&luxury=true" class="billion-recom-btn">View Products</a>
+                </div>
+            </div>
+            
+            <!-- Trending Item 4 -->
+            <div class="billion-trending-card">
+                <div class="billion-trending-img">
+                    <img src="https://via.placeholder.com/300x200?text=Designer+Bags" alt="Designer Bags">
+                </div>
+                <div class="billion-trending-content">
+                    <h3 class="billion-trending-name">Designer Bags</h3>
+                    <div class="billion-trending-meta">
+                        <div class="billion-trending-searches">
+                            <i class="fas fa-search"></i> 19.8K searches
+                        </div>
+                        <div class="billion-trending-change up">
+                            <i class="fas fa-arrow-up"></i> 12%
+                        </div>
+                    </div>
+                    <a href="/search?query=luxury+designer+bags&luxury=true" class="billion-recom-btn">View Products</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Curated Collections Section -->
+<div class="billion-collection-section">
+    <div class="container">
+        <div class="billion-collection-header">
+            <h2 class="billion-collection-title">Curated Collections</h2>
+            <p class="billion-collection-subtitle">Experience our hand-picked collections, featuring the finest selection of premium products for the discerning shopper.</p>
+        </div>
+        
+        <div class="billion-collection-grid">
+            <!-- Collection 1 -->
+            <div class="billion-collection-item">
+                <img src="https://via.placeholder.com/800x400?text=Summer+Luxury" alt="Summer Luxury" class="billion-collection-img">
+                <div class="billion-collection-overlay"></div>
+                <div class="billion-collection-content">
+                    <h3 class="billion-collection-name">Summer Luxury Essentials</h3>
+                    <p class="billion-collection-desc">Discover our exclusive selection of premium summer products, from high-end sunglasses to luxury beach accessories.</p>
+                    <a href="/search?query=luxury+summer+essentials&luxury=true" class="billion-collection-btn">
+                        Explore Collection
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Collection 2 -->
+            <div class="billion-collection-item">
+                <img src="https://via.placeholder.com/400x800?text=Tech+Enthusiast" alt="Tech Enthusiast" class="billion-collection-img">
+                <div class="billion-collection-overlay"></div>
+                <div class="billion-collection-content">
+                    <h3 class="billion-collection-name">Tech Enthusiast Collection</h3>
+                    <p class="billion-collection-desc">The ultimate selection of premium gadgets and tech accessories for the modern connoisseur.</p>
+                    <a href="/search?query=premium+tech+gadgets&luxury=true" class="billion-collection-btn">
+                        Explore Collection
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Collection 3 -->
+            <div class="billion-collection-item">
+                <img src="https://via.placeholder.com/600x300?text=Home+Office" alt="Home Office" class="billion-collection-img">
+                <div class="billion-collection-overlay"></div>
+                <div class="billion-collection-content">
+                    <h3 class="billion-collection-name">Luxury Home Office</h3>
+                    <p class="billion-collection-desc">Transform your workspace with our collection of premium home office furniture and accessories.</p>
+                    <a href="/search?query=luxury+home+office&luxury=true" class="billion-collection-btn">
+                        Explore Collection
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation for category cards
+        const categoryCards = document.querySelectorAll('.billion-category-card');
+        
+        categoryCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100 * index);
+        });
+        
+        // Animation for trending cards
+        const trendingCards = document.querySelectorAll('.billion-trending-card');
+        
+        const trendingObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    trendingObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        trendingCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            card.style.transitionDelay = `${index * 100}ms`;
+            trendingObserver.observe(card);
+        });
+        
+        // Animation for collection items
+        const collectionItems = document.querySelectorAll('.billion-collection-item');
+        
+        const collectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    collectionObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        collectionItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            item.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            item.style.transitionDelay = `${index * 150}ms`;
+            collectionObserver.observe(item);
+        });
+    });
+</script>
+{% endblock %}

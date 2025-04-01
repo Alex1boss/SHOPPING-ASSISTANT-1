@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+
+{% block title %}All Platform Deals - {{ query }} - ShopAI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <a href="{{ url_for('index') }}" class="btn btn-outline-light mb-4">
+                <i class="fas fa-arrow-left me-2"></i> Back to Search
+            </a>
+            <h1 class="display-5 fw-bold mb-2">All Platform Deals</h1>
+            <p class="lead text-light mb-4">Comparing prices and deals for <strong>{{ query }}</strong></p>
+            
+            <div class="alert alert-primary d-flex align-items-center" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                <div>
+                    We found deals for <strong>{{ query }}</strong> across multiple platforms. Filter and sort to find your perfect match.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <!-- Filters sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="card filter-card mb-4">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i> Filters</h5>
+                </div>
+                <div class="card-body">
+                    <form id="filters-form">
+                        <!-- Platform filter -->
+                        <div class="mb-4">
+                            <label class="form-label">Platform</label>
+                            <div class="platform-filters">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="platform" id="platform-all" value="" checked>
+                                    <label class="form-check-label" for="platform-all">All</label>
+                                </div>
+                                
+                                {% for platform in platforms %}
+                                <div class="form-check">
+                                    <input class="form-check-input platform-checkbox" type="radio" name="platform" 
+                                           id="platform-{{ platform.id }}" value="{{ platform.id }}">
+                                    <label class="form-check-label platform-label" for="platform-{{ platform.id }}">
+                                        <span class="platform-dot" style="background-color: {{ platform.color }}"></span>
+                                        {{ platform.name }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <!-- Price Range -->
+                        <div class="mb-4">
+                            <label class="form-label">Price Range</label>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="min-price" placeholder="Min" min="0">
+                                </div>
+                                <span>to</span>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="max-price" placeholder="Max" min="0">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Rating filter -->
+                        <div class="mb-4">
+                            <label class="form-label">Minimum Rating</label>
+                            <select class="form-select" id="min-rating">
+                                <option value="">Any rating</option>
+                                <option value="4.5">4.5+ stars</option>
+                                <option value="4">4+ stars</option>
+                                <option value="3.5">3.5+ stars</option>
+                                <option value="3">3+ stars</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Availability filter -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="in-stock-only" value="true">
+                                <label class="form-check-label" for="in-stock-only">
+                                    In Stock Only
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-filter me-2"></i> Apply Filters
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Deal Score Explanation Card -->
+            <div class="card mb-4">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="fas fa-award me-2"></i> Deal Score</h5>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted mb-3">Our AI considers these factors to calculate deal scores:</p>
+                    <ul class="list-unstyled small text-muted">
+                        <li class="mb-2"><i class="fas fa-percentage me-2 text-success"></i> Discount percentage</li>
+                        <li class="mb-2"><i class="fas fa-star me-2 text-warning"></i> User ratings & reviews</li>
+                        <li class="mb-2"><i class="fas fa-chart-line me-2 text-primary"></i> Price history</li>
+                        <li class="mb-2"><i class="fas fa-truck me-2 text-info"></i> Shipping speed & cost</li>
+                        <li class="mb-2"><i class="fas fa-check-circle me-2 text-success"></i> Availability</li>
+                    </ul>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-info" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1">
+                        <span class="small">Poor</span>
+                        <span class="small">Excellent</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Deals content -->
+        <div class="col-lg-9">
+            <!-- Sorting and result count -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="results-count">
+                    <span id="filtered-count">0</span> results
+                </div>
+                <div class="sorting-options d-flex align-items-center">
+                    <label class="me-2">Sort by:</label>
+                    <select class="form-select form-select-sm" id="sort-by">
+                        <option value="deal_score">Deal Score</option>
+                        <option value="price">Price: Low to High</option>
+                        <option value="price" data-order="desc">Price: High to Low</option>
+                        <option value="discount">Discount: Highest First</option>
+                        <option value="rating">Rating: Highest First</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Loading indicator -->
+            <div id="loading-indicator" class="text-center my-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3">Searching across multiple platforms...</p>
+            </div>
+            
+            <!-- Empty state -->
+            <div id="empty-state" class="text-center my-5 d-none">
+                <i class="fas fa-search fa-3x mb-3 text-muted"></i>
+                <h3 class="mb-3">No Deals Found</h3>
+                <p class="text-muted mb-4">We couldn't find any deals matching your filters. Try adjusting your filters or search for something else.</p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-search me-2"></i> Try Another Search
+                </a>
+            </div>
+            
+            <!-- Error state -->
+            <div id="error-state" class="text-center my-5 d-none">
+                <i class="fas fa-exclamation-triangle fa-3x mb-3 text-danger"></i>
+                <h3 class="mb-3">Oops! Something went wrong</h3>
+                <p class="text-muted mb-4" id="error-message">We encountered an error while fetching deals. Please try again later.</p>
+                <button id="retry-button" class="btn btn-primary">
+                    <i class="fas fa-sync-alt me-2"></i> Retry
+                </button>
+            </div>
+            
+            <!-- Deals container -->
+            <div id="deals-container" class="row g-3">
+                <!-- Deals will be loaded here via JavaScript -->
+            </div>
+            
+            <!-- Deal card template -->
+            <template id="deal-card-template">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card product-card h-100 border-0 shadow-sm">
+                        <div class="product-image-container">
+                            <img src="" class="card-img-top product-image" alt="Product Image">
+                            <div class="product-platform-badge">
+                                <span class="platform-name"></span>
+                            </div>
+                            <div class="deal-score-badge">
+                                <span class="score-value"></span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title product-title"></h5>
+                            <div class="rating mb-2">
+                                <span class="stars"></span>
+                                <span class="rating-value ms-1"></span>
+                                <span class="review-count ms-1"></span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="price-container">
+                                    <span class="current-price"></span>
+                                    <span class="original-price"></span>
+                                </div>
+                                <span class="discount-badge"></span>
+                            </div>
+                            <p class="card-text small text-muted product-description"></p>
+                            
+                            <div class="key-features mt-3 mb-2">
+                                <h6 class="small fw-bold">Key Features:</h6>
+                                <ul class="small text-muted features-list"></ul>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                            <div class="d-grid gap-2">
+                                <a href="#" class="btn btn-sm btn-primary view-deal-btn" target="_blank">
+                                    <i class="fas fa-external-link-alt me-1"></i> View Deal
+                                </a>
+                                <button class="btn btn-sm btn-outline-light compare-btn">
+                                    <i class="fas fa-exchange-alt me-1"></i> Compare
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/all_deals.js') }}"></script>
+<script src="{{ url_for('static', filename='js/product_card.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,725 @@
+{% extends 'base_luxury.html' %}
+
+{% block title %}LuxeSeeker | Ultra-Premium Shopping Experience{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hero Section Styles */
+    .billion-hero {
+        position: relative;
+        padding: 8rem 0 3rem;
+    }
+    
+    .billion-hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            linear-gradient(0deg, var(--billion-black) 0%, rgba(13, 13, 13, 0.7) 100%),
+            url("{{ url_for('static', filename='img/luxury-bg.svg') }}") no-repeat center/cover;
+        opacity: 1;
+        z-index: -1;
+    }
+    
+    .billion-hero-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .billion-hero-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, var(--billion-white) 60%, var(--billion-cyan));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+    }
+    
+    .billion-hero-subtitle {
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: var(--billion-platinum);
+        margin-bottom: 3rem;
+        max-width: 650px;
+    }
+    
+    .billion-search-container {
+        position: relative;
+        margin-bottom: 4rem;
+    }
+    
+    .billion-search-input {
+        height: 4.5rem;
+        background: rgba(13, 13, 13, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(0, 255, 255, 0.15);
+        border-radius: 3rem;
+        color: var(--billion-white);
+        padding: 0 2rem 0 4.5rem;
+        font-size: 1.1rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 255, 255, 0.05);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .billion-search-input:focus {
+        background: rgba(13, 13, 13, 0.85);
+        border-color: var(--billion-cyan);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(0, 255, 255, 0.15);
+        transform: translateY(-5px);
+    }
+    
+    .billion-search-icon {
+        position: absolute;
+        left: 1.6rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--billion-cyan);
+        font-size: 1.4rem;
+        transition: all 0.3s ease;
+    }
+    
+    .billion-search-input:focus + .billion-search-icon {
+        color: var(--billion-white);
+    }
+    
+    .billion-search-btn {
+        position: absolute;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: linear-gradient(135deg, var(--billion-cyan), var(--billion-electric));
+        border: none;
+        color: var(--billion-black);
+        font-weight: 600;
+        padding: 0.8rem 2rem;
+        border-radius: 2.5rem;
+        font-size: 1rem;
+        letter-spacing: 0.5px;
+        box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .billion-search-btn:hover {
+        transform: translateY(-50%) scale(1.05);
+        box-shadow: 0 8px 25px rgba(0, 255, 255, 0.4);
+    }
+    
+    /* Features Section */
+    .billion-features {
+        padding: 5rem 0;
+    }
+    
+    .billion-feature-card {
+        background: var(--billion-gradient-main);
+        border: var(--billion-border);
+        border-radius: 20px;
+        padding: 2.5rem;
+        height: 100%;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+    
+    .billion-feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--billion-shadow-lg), 0 0 30px rgba(0, 255, 255, 0.1);
+        border-color: rgba(0, 255, 255, 0.1);
+    }
+    
+    .billion-feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0), rgba(0, 255, 255, 0.03) 50%, rgba(0, 0, 0, 0) 100%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        z-index: -1;
+    }
+    
+    .billion-feature-card:hover::before {
+        opacity: 1;
+    }
+    
+    .billion-feature-icon {
+        width: 70px;
+        height: 70px;
+        background: rgba(0, 255, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        color: var(--billion-cyan);
+        font-size: 28px;
+        transition: all 0.4s ease;
+    }
+    
+    .billion-feature-card:hover .billion-feature-icon {
+        background: rgba(0, 255, 255, 0.2);
+        transform: scale(1.1);
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    }
+    
+    .billion-feature-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--billion-white);
+    }
+    
+    .billion-feature-text {
+        color: var(--billion-platinum);
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    /* Platforms Section */
+    .billion-platforms {
+        padding: 5rem 0;
+    }
+    
+    .billion-section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 3rem;
+        text-align: center;
+        background: linear-gradient(135deg, var(--billion-white) 60%, var(--billion-cyan));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+    }
+    
+    .billion-platform-card {
+        background: rgba(13, 13, 13, 0.4);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        height: 100%;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .billion-platform-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .billion-platform-card::after {
+        content: '';
+        position: absolute;
+        top: -100%;
+        left: -100%;
+        width: 300%;
+        height: 300%;
+        background: linear-gradient(
+            to right,
+            transparent 0%,
+            rgba(255, 255, 255, 0.05) 50%,
+            transparent 100%
+        );
+        transform: rotate(30deg);
+        transition: transform 1s ease;
+        pointer-events: none;
+    }
+    
+    .billion-platform-card:hover::after {
+        transform: rotate(30deg) translate(50%, 50%);
+    }
+    
+    .billion-platform-logo {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        font-size: 2.5rem;
+        color: var(--billion-white);
+        transition: all 0.4s ease;
+    }
+    
+    .amazon-logo { color: var(--amazon-color); }
+    .walmart-logo { color: var(--walmart-color); }
+    .bestbuy-logo { color: var(--bestbuy-color); }
+    .target-logo { color: var(--target-color); }
+    .ebay-logo { color: var(--ebay-color); }
+    
+    .billion-platform-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--billion-white);
+        margin-bottom: 0.8rem;
+    }
+    
+    .billion-platform-description {
+        color: var(--billion-platinum);
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* VIP Section */
+    .billion-vip-section {
+        background: linear-gradient(135deg, rgba(75, 0, 130, 0.3), rgba(13, 13, 13, 0.5));
+        border: 1px solid rgba(75, 0, 130, 0.2);
+        border-radius: 24px;
+        padding: 3rem;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 5rem;
+    }
+    
+    .billion-vip-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><rect width="40" height="40" fill="none"/><path d="M0 20 L20 0 L40 20 L20 40 Z" fill="rgba(75, 0, 130, 0.05)"/></svg>');
+        opacity: 0.5;
+        z-index: -1;
+    }
+    
+    .billion-vip-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(75, 0, 130, 0.2);
+        border-radius: 50%;
+        font-size: 3.5rem;
+        color: var(--billion-purple);
+        box-shadow: 0 0 30px rgba(75, 0, 130, 0.4);
+    }
+    
+    .billion-vip-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, var(--billion-white) 40%, var(--billion-purple) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+    }
+    
+    .billion-vip-text {
+        color: var(--billion-platinum);
+        font-size: 1.1rem;
+        text-align: center;
+        max-width: 700px;
+        margin: 0 auto 2rem;
+    }
+    
+    .billion-vip-btn {
+        background: linear-gradient(135deg, var(--billion-purple), #6c0eb1);
+        color: white;
+        font-weight: 600;
+        padding: 1rem 2.5rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
+        display: block;
+        margin: 0 auto;
+        max-width: 250px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(75, 0, 130, 0.3);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .billion-vip-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(75, 0, 130, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Recommendations Section */
+    #searchResults {
+        margin-top: 2rem;
+    }
+
+    .billion-results-container {
+        padding: 2rem;
+        background: rgba(13, 13, 13, 0.4);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(0, 255, 255, 0.1);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .billion-results-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        color: var(--billion-white);
+    }
+
+    /* Loading animation */
+    .billion-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
+    }
+
+    .billion-loading-spinner {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 4px solid rgba(0, 255, 255, 0.1);
+        border-top: 4px solid var(--billion-cyan);
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Full-screen Video Background -->
+<section class="billion-hero">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 col-xl-8 mx-auto">
+                <div class="billion-hero-content text-center">
+                    <h1 class="billion-hero-title">The Ultimate Luxury Shopping Experience</h1>
+                    <p class="billion-hero-subtitle mx-auto">Discover exclusive products and unparalleled deals from premium brands, curated by advanced AI for a truly elite shopping journey.</p>
+                    
+                    <!-- AI-Powered Glassmorphism Floating Search Bar -->
+                    <div class="billion-search-container">
+                        <form id="searchForm" action="{{ url_for('search_api') }}" method="post">
+                            <input type="hidden" name="is_luxury" value="true">
+                            <input type="text" id="searchInput" name="query" class="form-control billion-search-input" placeholder="What luxury product are you looking for today?" autocomplete="off">
+                            <i class="fas fa-search billion-search-icon billion-glow"></i>
+                            <button type="submit" class="billion-search-btn billion-transition">Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="billion-features">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="billion-feature-card">
+                    <div class="billion-feature-icon billion-float">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 class="billion-feature-title">AI-Powered Search</h3>
+                    <p class="billion-feature-text">Our advanced artificial intelligence finds the perfect products that match your exact preferences and needs.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="billion-feature-card">
+                    <div class="billion-feature-icon billion-float" style="background: rgba(15, 157, 88, 0.1); color: var(--billion-green);">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="billion-feature-title">Price Analytics</h3>
+                    <p class="billion-feature-text">Real-time price tracking and intelligent deal scoring to ensure you always get the absolute best value.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="billion-feature-card">
+                    <div class="billion-feature-icon billion-float" style="background: rgba(215, 38, 56, 0.1); color: var(--billion-red);">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="billion-feature-title">Super Deals</h3>
+                    <p class="billion-feature-text">Exclusive flash deals and limited-time offers across premium brands, handpicked for elite shoppers.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="billion-feature-card">
+                    <div class="billion-feature-icon billion-float" style="background: rgba(255, 215, 0, 0.1); color: var(--billion-gold);">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <h3 class="billion-feature-title">VIP Experience</h3>
+                    <p class="billion-feature-text">Personalized shopping assistance, exclusive access to premium collections, and VIP-only benefits.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Top Shopping Platforms -->
+<section class="billion-platforms">
+    <div class="container">
+        <h2 class="billion-section-title">Elite Shopping Platforms</h2>
+        <div class="row g-4">
+            <div class="col-6 col-md-4 col-lg">
+                <div class="billion-platform-card">
+                    <div class="billion-platform-logo amazon-logo">
+                        <i class="fab fa-amazon"></i>
+                    </div>
+                    <h3 class="billion-platform-name">Amazon</h3>
+                    <p class="billion-platform-description">Extensive selection of premium products with fast delivery options.</p>
+                </div>
+            </div>
+            
+            <div class="col-6 col-md-4 col-lg">
+                <div class="billion-platform-card">
+                    <div class="billion-platform-logo walmart-logo">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h3 class="billion-platform-name">Walmart</h3>
+                    <p class="billion-platform-description">Value luxury with competitive prices on high-end merchandise.</p>
+                </div>
+            </div>
+            
+            <div class="col-6 col-md-4 col-lg">
+                <div class="billion-platform-card">
+                    <div class="billion-platform-logo bestbuy-logo">
+                        <i class="fas fa-tag"></i>
+                    </div>
+                    <h3 class="billion-platform-name">Best Buy</h3>
+                    <p class="billion-platform-description">Premium electronics and tech with expert service guarantees.</p>
+                </div>
+            </div>
+            
+            <div class="col-6 col-md-4 col-lg">
+                <div class="billion-platform-card">
+                    <div class="billion-platform-logo target-logo">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3 class="billion-platform-name">Target</h3>
+                    <p class="billion-platform-description">Curated selection of designer collections and exclusive items.</p>
+                </div>
+            </div>
+            
+            <div class="col-6 col-md-4 col-lg">
+                <div class="billion-platform-card">
+                    <div class="billion-platform-logo ebay-logo">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <h3 class="billion-platform-name">eBay</h3>
+                    <p class="billion-platform-description">Rare finds and limited-edition luxury items from around the world.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- VIP Membership Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="billion-vip-section">
+            <div class="billion-vip-icon billion-pulse">
+                <i class="fas fa-crown"></i>
+            </div>
+            <h2 class="billion-vip-title">Exclusive VIP Membership</h2>
+            <p class="billion-vip-text">Join our elite membership program for unparalleled benefits: personal shopping assistance, early access to limited editions, and VIP-only discounts on luxury items. Experience shopping like never before.</p>
+            <a href="#" class="billion-vip-btn billion-shine">
+                <i class="fas fa-crown me-2"></i> Upgrade to VIP
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Search Results Section -->
+<section class="container">
+    <div id="searchResults"></div>
+    
+    <div id="loadingIndicator" class="billion-loading d-none">
+        <div class="billion-loading-spinner"></div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchForm = document.getElementById('searchForm');
+        const searchResults = document.getElementById('searchResults');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        
+        // Placeholder rotation for search input
+        const searchInput = document.getElementById('searchInput');
+        const placeholders = [
+            "Find the perfect luxury watch...",
+            "Search for premium headphones...",
+            "Discover high-end furniture...",
+            "Looking for designer fashion?",
+            "Find exclusive limited editions..."
+        ];
+        
+        let currentPlaceholder = 0;
+        
+        function rotatePlaceholders() {
+            searchInput.setAttribute('placeholder', placeholders[currentPlaceholder]);
+            currentPlaceholder = (currentPlaceholder + 1) % placeholders.length;
+        }
+        
+        setInterval(rotatePlaceholders, 3000);
+        rotatePlaceholders();
+        
+        // Form submission handling
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show loading
+            loadingIndicator.classList.remove('d-none');
+            searchResults.innerHTML = '';
+            
+            const formData = new FormData(searchForm);
+            
+            fetch(searchForm.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading
+                loadingIndicator.classList.add('d-none');
+                
+                if (data.error) {
+                    searchResults.innerHTML = `
+                        <div class="billion-results-container">
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-circle me-2"></i> ${data.error}
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                if (data.recommendations && data.recommendations.length > 0) {
+                    const query = searchInput.value;
+                    displayRecommendations(data.recommendations, query);
+                } else {
+                    searchResults.innerHTML = `
+                        <div class="billion-results-container">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i> No products found matching your search.
+                            </div>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                loadingIndicator.classList.add('d-none');
+                searchResults.innerHTML = `
+                    <div class="billion-results-container">
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i> An error occurred while searching. Please try again.
+                        </div>
+                    </div>
+                `;
+                console.error('Error:', error);
+            });
+        });
+        
+        function displayRecommendations(recommendations, query) {
+            let html = `
+                <div class="billion-results-container">
+                    <h2 class="billion-results-title">Search Results for "${query}"</h2>
+                    <div class="row g-4">
+            `;
+            
+            recommendations.forEach(product => {
+                const platformClass = getPlatformClass(product.platform);
+                const price = product.price ? `$${product.price.toFixed(2)}` : product.price_range || 'Price unavailable';
+                const discount = product.discount_percent ? `<span class="badge bg-danger ms-2">-${product.discount_percent}%</span>` : '';
+                const originalPrice = product.original_price ? `<span class="text-decoration-line-through text-muted ms-2">$${product.original_price.toFixed(2)}</span>` : '';
+                const dealScore = product.deal_score ? `<div class="luxury-deal-score position-absolute top-0 end-0 m-3">${product.deal_score}/100</div>` : '';
+                
+                html += `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="luxury-product-card h-100">
+                            <div class="luxury-product-image-container position-relative">
+                                <img src="${product.image_url || 'https://via.placeholder.com/300?text=No+Image'}" alt="${product.name}" class="luxury-product-image">
+                                <div class="luxury-platform-badge position-absolute bottom-0 start-0 m-3 ${platformClass}">
+                                    ${product.platform}
+                                </div>
+                                ${dealScore}
+                            </div>
+                            <div class="p-4">
+                                <h3 class="luxury-product-title">${product.name}</h3>
+                                <p class="luxury-product-description">${product.description || 'No description available'}</p>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div class="price-container">
+                                        <span class="fw-bold fs-5">${price}</span>
+                                        ${originalPrice}
+                                        ${discount}
+                                    </div>
+                                    <div class="rating-container">
+                                        ${product.rating ? `<i class="fas fa-star text-warning"></i> <span class="ms-1">${product.rating}</span>` : ''}
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between">
+                                    <a href="${product.product_url}" target="_blank" class="btn luxury-view-deal-btn billion-transition">
+                                        <i class="fas fa-external-link-alt me-2"></i> View Deal
+                                    </a>
+                                    <button class="btn luxury-compare-btn billion-transition text-white">
+                                        <i class="fas fa-sync-alt me-1"></i> Compare
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+            `;
+            
+            searchResults.innerHTML = html;
+            
+            // Initialize any card effects
+            if (typeof setupCardEffects === 'function') {
+                setupCardEffects();
+            }
+        }
+        
+        function getPlatformClass(platform) {
+            if (!platform) return '';
+            
+            const platformLower = platform.toLowerCase();
+            
+            if (platformLower.includes('amazon')) return 'amazon-badge';
+            if (platformLower.includes('walmart')) return 'walmart-badge';
+            if (platformLower.includes('bestbuy')) return 'bestbuy-badge';
+            if (platformLower.includes('target')) return 'target-badge';
+            if (platformLower.includes('ebay')) return 'ebay-badge';
+            
+            return '';
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,1355 @@
+{% extends 'base_luxury.html' %}
+
+{% block title %}{{ product.name }} | LuxeSeeker{% endblock %}
+
+{% block extra_css %}
+<style>
+    .billion-product-page {
+        padding: 3rem 0;
+        min-height: 100vh;
+    }
+    
+    .billion-product-container {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .billion-product-glow {
+        position: absolute;
+        top: -20%;
+        right: -10%;
+        width: 800px;
+        height: 800px;
+        background: radial-gradient(circle, rgba(0, 119, 255, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        filter: blur(80px);
+        z-index: 0;
+        pointer-events: none;
+    }
+    
+    .billion-product-gallery {
+        position: relative;
+        height: 500px;
+        overflow: hidden;
+        border-radius: 20px;
+        margin-bottom: 1.5rem;
+        background: var(--billion-gradient-dark);
+        border: var(--billion-border);
+    }
+    
+    .billion-gallery-main {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    
+    .billion-gallery-main img {
+        max-width: 100%;
+        max-height: 90%;
+        object-fit: contain;
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .billion-gallery-nav {
+        position: absolute;
+        bottom: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 0.5rem;
+        z-index: 10;
+    }
+    
+    .billion-gallery-thumb {
+        width: 60px;
+        height: 60px;
+        border-radius: 10px;
+        overflow: hidden;
+        cursor: pointer;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        opacity: 0.7;
+        transition: all 0.3s ease;
+    }
+    
+    .billion-gallery-thumb.active {
+        border-color: var(--billion-cyan);
+        opacity: 1;
+    }
+    
+    .billion-gallery-thumb:hover {
+        opacity: 1;
+    }
+    
+    .billion-gallery-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .billion-gallery-controls {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 5;
+        pointer-events: none;
+    }
+    
+    .billion-gallery-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-radius: 50%;
+        color: var(--billion-white);
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        pointer-events: auto;
+    }
+    
+    .billion-gallery-arrow:hover {
+        background: var(--billion-cyan);
+        color: var(--billion-black);
+    }
+    
+    .billion-gallery-prev {
+        left: 1.5rem;
+    }
+    
+    .billion-gallery-next {
+        right: 1.5rem;
+    }
+    
+    .billion-gallery-mode {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-radius: 50px;
+        padding: 0.5rem 1rem;
+        color: var(--billion-platinum);
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        pointer-events: auto;
+    }
+    
+    .billion-mode-btn {
+        background: none;
+        border: none;
+        color: var(--billion-platinum);
+        padding: 0.3rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .billion-mode-btn:hover,
+    .billion-mode-btn.active {
+        color: var(--billion-cyan);
+        background: rgba(0, 255, 255, 0.1);
+    }
+    
+    .billion-product-info {
+        padding: 2rem;
+        background: var(--billion-gradient-dark);
+        border: var(--billion-border);
+        border-radius: 20px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .billion-product-platform {
+        display: inline-block;
+        padding: 0.5rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .billion-platform-amazon { color: var(--amazon-color); border-color: rgba(255, 153, 0, 0.3); }
+    .billion-platform-walmart { color: var(--walmart-color); border-color: rgba(0, 113, 220, 0.3); }
+    .billion-platform-bestbuy { color: var(--bestbuy-color); border-color: rgba(0, 70, 190, 0.3); }
+    .billion-platform-target { color: var(--target-color); border-color: rgba(204, 0, 0, 0.3); }
+    .billion-platform-ebay { color: var(--ebay-color); border-color: rgba(229, 50, 56, 0.3); }
+    
+    .billion-product-name {
+        font-size: 2.5rem;
+        font-weight: 800;
+        line-height: 1.3;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, var(--billion-white) 70%, var(--billion-cyan));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+    }
+    
+    .billion-product-rating {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .billion-rating-stars {
+        color: var(--billion-gold);
+        margin-right: 0.8rem;
+        font-size: 1.2rem;
+    }
+    
+    .billion-review-count {
+        color: var(--billion-platinum);
+        font-size: 1rem;
+    }
+    
+    .billion-product-description {
+        margin-bottom: 2rem;
+        color: var(--billion-platinum);
+        font-size: 1.1rem;
+        line-height: 1.8;
+    }
+    
+    .billion-product-features {
+        margin-bottom: 2.5rem;
+    }
+    
+    .billion-features-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--billion-white);
+    }
+    
+    .billion-feature-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .billion-feature-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+    
+    .billion-feature-icon {
+        width: 24px;
+        min-width: 24px;
+        height: 24px;
+        background: rgba(0, 255, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--billion-cyan);
+        margin-right: 1rem;
+        font-size: 0.8rem;
+    }
+    
+    .billion-feature-text {
+        color: var(--billion-white);
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    .billion-product-pricing {
+        margin-bottom: 2.5rem;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: var(--billion-border);
+    }
+    
+    .billion-pricing-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .billion-pricing-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--billion-white);
+    }
+    
+    .billion-price-badge {
+        background: linear-gradient(135deg, var(--billion-green), rgba(15, 157, 88, 0.7));
+        color: white;
+        font-weight: 700;
+        padding: 0.5rem 1.2rem;
+        border-radius: 50px;
+        font-size: 1rem;
+    }
+    
+    .billion-pricing-current {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--billion-cyan);
+        margin-bottom: 0.5rem;
+    }
+    
+    .billion-pricing-original {
+        font-size: 1.3rem;
+        text-decoration: line-through;
+        color: var(--billion-platinum);
+        opacity: 0.7;
+        margin-bottom: 1.5rem;
+    }
+    
+    .billion-price-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .billion-price-detail {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        color: var(--billion-platinum);
+        display: flex;
+        align-items: center;
+    }
+    
+    .billion-price-detail i {
+        margin-right: 0.5rem;
+        color: var(--billion-cyan);
+    }
+    
+    .billion-action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .billion-buy-btn {
+        padding: 1.2rem;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        text-decoration: none;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .billion-buy-now {
+        background: linear-gradient(135deg, var(--billion-gold), #E6C200);
+        color: #000;
+        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    }
+    
+    .billion-buy-now:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(255, 215, 0, 0.3);
+        color: #000;
+    }
+    
+    .billion-add-cart {
+        background: var(--billion-gradient-blue);
+        color: var(--billion-black);
+        box-shadow: 0 10px 30px rgba(0, 123, 255, 0.2);
+    }
+    
+    .billion-add-cart:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 123, 255, 0.3);
+        color: var(--billion-black);
+    }
+    
+    .billion-wishlist {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--billion-white);
+    }
+    
+    .billion-wishlist:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-5px);
+        color: var(--billion-white);
+    }
+    
+    .billion-action-icon {
+        margin-right: 0.8rem;
+        font-size: 1.2rem;
+    }
+    
+    .billion-specs-section {
+        margin-top: 3rem;
+    }
+    
+    .billion-specs-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 2rem;
+        color: var(--billion-white);
+        text-align: center;
+    }
+    
+    .billion-specs-container {
+        background: var(--billion-gradient-dark);
+        border: var(--billion-border);
+        border-radius: 20px;
+        overflow: hidden;
+    }
+    
+    .billion-specs-tabs {
+        display: flex;
+        border-bottom: var(--billion-border);
+    }
+    
+    .billion-specs-tab {
+        padding: 1.2rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--billion-platinum);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: transparent;
+        border: none;
+        border-bottom: 3px solid transparent;
+        flex: 1;
+        text-align: center;
+    }
+    
+    .billion-specs-tab.active {
+        color: var(--billion-cyan);
+        border-bottom-color: var(--billion-cyan);
+        background: rgba(0, 255, 255, 0.05);
+    }
+    
+    .billion-specs-tab:hover:not(.active) {
+        color: var(--billion-white);
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .billion-specs-content {
+        padding: 2rem;
+    }
+    
+    .billion-specs-panel {
+        display: none;
+    }
+    
+    .billion-specs-panel.active {
+        display: block;
+    }
+    
+    .billion-specs-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .billion-spec-item {
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .billion-spec-name {
+        font-size: 0.9rem;
+        color: var(--billion-platinum);
+        margin-bottom: 0.5rem;
+    }
+    
+    .billion-spec-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--billion-white);
+    }
+    
+    .billion-compare-section {
+        margin-top: 3rem;
+    }
+    
+    .billion-compare-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 2rem;
+        color: var(--billion-white);
+        text-align: center;
+    }
+    
+    .billion-compare-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .billion-compare-card {
+        background: var(--billion-gradient-dark);
+        border: var(--billion-border);
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .billion-compare-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--billion-shadow-lg);
+        border-color: rgba(0, 255, 255, 0.1);
+    }
+    
+    .billion-compare-img {
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        border-bottom: var(--billion-border);
+        background: rgba(0, 0, 0, 0.2);
+    }
+    
+    .billion-compare-img img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+    
+    .billion-compare-content {
+        padding: 1.5rem;
+    }
+    
+    .billion-compare-platform {
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.3rem 0.8rem;
+        border-radius: 50px;
+        background: rgba(0, 0, 0, 0.4);
+        display: inline-block;
+        margin-bottom: 0.8rem;
+    }
+    
+    .billion-compare-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+        color: var(--billion-white);
+        line-height: 1.4;
+        height: 3em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    
+    .billion-compare-price {
+        display: flex;
+        align-items: baseline;
+        margin-bottom: 1rem;
+    }
+    
+    .billion-compare-current {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var(--billion-cyan);
+        margin-right: 0.8rem;
+    }
+    
+    .billion-compare-original {
+        font-size: 0.9rem;
+        text-decoration: line-through;
+        color: var(--billion-platinum);
+        opacity: 0.7;
+    }
+    
+    .billion-compare-btn {
+        width: 100%;
+        padding: 0.8rem;
+        border-radius: 8px;
+        background: var(--billion-gradient-blue);
+        color: var(--billion-black);
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        display: block;
+        text-decoration: none;
+    }
+    
+    .billion-compare-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 123, 255, 0.2);
+        color: var(--billion-black);
+    }
+    
+    .billion-ai-assistant {
+        margin-top: 3rem;
+        background: var(--billion-gradient-dark);
+        border: var(--billion-border);
+        border-radius: 20px;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .billion-ai-badge {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background: linear-gradient(135deg, var(--billion-purple), var(--billion-red));
+        color: white;
+        font-weight: 700;
+        padding: 0.5rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .billion-ai-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        color: var(--billion-white);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .billion-ai-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--billion-purple), var(--billion-red));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+    }
+    
+    .billion-ai-content {
+        color: var(--billion-platinum);
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+    }
+    
+    .billion-ai-highlights {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .billion-ai-highlight {
+        background: rgba(75, 0, 130, 0.15);
+        border: 1px solid rgba(75, 0, 130, 0.3);
+        color: var(--billion-white);
+        padding: 0.8rem 1.5rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    
+    .billion-ai-actions {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .billion-ai-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--billion-platinum);
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .billion-ai-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--billion-white);
+    }
+    
+    .billion-recom-section {
+        margin-top: 3rem;
+    }
+    
+    .billion-recom-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 2rem;
+        color: var(--billion-white);
+        text-align: center;
+    }
+    
+    .billion-recom-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 2rem;
+    }
+    
+    .billion-recom-card {
+        background: var(--billion-gradient-dark);
+        border: var(--billion-border);
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .billion-recom-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--billion-shadow-lg);
+        border-color: rgba(0, 255, 255, 0.1);
+    }
+    
+    .billion-recom-img {
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        border-bottom: var(--billion-border);
+        background: rgba(0, 0, 0, 0.2);
+    }
+    
+    .billion-recom-img img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+    
+    .billion-recom-content {
+        padding: 1.5rem;
+    }
+    
+    .billion-recom-name {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+        color: var(--billion-white);
+        line-height: 1.4;
+        height: 2.8em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    
+    .billion-recom-price {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: var(--billion-cyan);
+        margin-bottom: 1rem;
+    }
+    
+    .billion-recom-btn {
+        width: 100%;
+        padding: 0.7rem;
+        border-radius: 8px;
+        background: var(--billion-gradient-blue);
+        color: var(--billion-black);
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        display: block;
+        text-decoration: none;
+    }
+    
+    .billion-recom-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 123, 255, 0.2);
+        color: var(--billion-black);
+    }
+    
+    /* 3D product view */
+    .billion-3d-view {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 20;
+        display: none;
+    }
+    
+    .billion-3d-view.active {
+        display: block;
+    }
+    
+    .billion-3d-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .billion-3d-close {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 1;
+    }
+    
+    .billion-3d-close:hover {
+        background: var(--billion-red);
+    }
+    
+    /* Animation for floating elements */
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+    }
+    
+    .billion-float {
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    /* 360 rotation animation */
+    @keyframes rotate360 {
+        0% { transform: rotateY(0deg); }
+        100% { transform: rotateY(360deg); }
+    }
+    
+    .billion-rotate {
+        animation: rotate360 30s linear infinite;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="billion-product-page">
+    <div class="container">
+        <!-- Product Container -->
+        <div class="billion-product-container">
+            <div class="billion-product-glow"></div>
+            
+            <div class="row">
+                <!-- Product Gallery -->
+                <div class="col-lg-6 mb-4">
+                    <div class="billion-product-gallery">
+                        <div class="billion-gallery-main">
+                            <img src="{{ product.image_url or 'https://via.placeholder.com/600x400?text=No+Image' }}" alt="{{ product.name }}" class="billion-main-image">
+                        </div>
+                        
+                        <div class="billion-gallery-nav">
+                            <div class="billion-gallery-thumb active" data-src="{{ product.image_url or 'https://via.placeholder.com/600x400?text=No+Image' }}">
+                                <img src="{{ product.image_url or 'https://via.placeholder.com/100x100?text=No+Image' }}" alt="Thumbnail 1">
+                            </div>
+                            
+                            <!-- Additional thumbnails would be here -->
+                        </div>
+                        
+                        <div class="billion-gallery-controls">
+                            <div class="billion-gallery-arrow billion-gallery-prev">
+                                <i class="fas fa-chevron-left"></i>
+                            </div>
+                            <div class="billion-gallery-arrow billion-gallery-next">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="billion-gallery-mode">
+                            <span>View:</span>
+                            <button class="billion-mode-btn active" data-mode="normal"><i class="fas fa-image"></i></button>
+                            <button class="billion-mode-btn" data-mode="360"><i class="fas fa-redo"></i></button>
+                            <button class="billion-mode-btn" data-mode="ar"><i class="fas fa-cube"></i></button>
+                        </div>
+                        
+                        <!-- 3D View Overlay -->
+                        <div class="billion-3d-view">
+                            <div class="billion-3d-close">
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <div class="billion-3d-container">
+                                <!-- 3D model would go here -->
+                                <img src="{{ product.image_url or 'https://via.placeholder.com/600x400?text=No+Image' }}" alt="{{ product.name }}" class="billion-rotate">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product Info -->
+                <div class="col-lg-6">
+                    <div class="billion-product-info">
+                        <div class="billion-product-platform {{ product.platform.lower() if product.platform else '' }}-badge">
+                            <i class="fas {% if product.platform == 'Amazon' %}fa-amazon{% elif product.platform == 'Walmart' %}fa-shopping-cart{% elif product.platform == 'Best Buy' %}fa-tag{% elif product.platform == 'Target' %}fa-bullseye{% elif product.platform == 'eBay' %}fa-shopping-bag{% else %}fa-store{% endif %} me-2"></i>
+                            {{ product.platform or 'Unknown Platform' }}
+                        </div>
+                        
+                        <h1 class="billion-product-name">{{ product.name }}</h1>
+                        
+                        <div class="billion-product-rating">
+                            <div class="billion-rating-stars">
+                                {% if product.rating %}
+                                    {% for i in range(5) %}
+                                        {% if i < product.rating|int %}
+                                            <i class="fas fa-star"></i>
+                                        {% elif i < product.rating and i == product.rating|int %}
+                                            <i class="fas fa-star-half-alt"></i>
+                                        {% else %}
+                                            <i class="far fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            </div>
+                            <div class="billion-review-count">
+                                {{ product.rating or 'No rating' }} {% if product.review_count %}({{ product.review_count }} reviews){% endif %}
+                            </div>
+                        </div>
+                        
+                        <p class="billion-product-description">{{ product.description or 'No description available.' }}</p>
+                        
+                        {% if product.key_features %}
+                        <div class="billion-product-features">
+                            <h3 class="billion-features-title">Key Features</h3>
+                            <ul class="billion-feature-list">
+                                {% for feature in product.key_features %}
+                                <li class="billion-feature-item">
+                                    <div class="billion-feature-icon">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    <div class="billion-feature-text">{{ feature }}</div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="billion-product-pricing">
+                            <div class="billion-pricing-header">
+                                <h3 class="billion-pricing-title">Pricing</h3>
+                                {% if product.discount_percent %}
+                                <div class="billion-price-badge">{{ product.discount_percent }}% OFF</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="billion-pricing-current">${{ format_price(product.price) if product.price else product.price_range or 'Price unavailable' }}</div>
+                            
+                            {% if product.original_price and product.original_price > product.price %}
+                            <div class="billion-pricing-original">${{ format_price(product.original_price) }}</div>
+                            {% endif %}
+                            
+                            <div class="billion-price-details">
+                                {% if product.in_stock %}
+                                <div class="billion-price-detail">
+                                    <i class="fas fa-check-circle"></i> In Stock
+                                </div>
+                                {% else %}
+                                <div class="billion-price-detail">
+                                    <i class="fas fa-times-circle"></i> Out of Stock
+                                </div>
+                                {% endif %}
+                                
+                                {% if product.delivery_time %}
+                                <div class="billion-price-detail">
+                                    <i class="fas fa-shipping-fast"></i> {{ product.delivery_time }}
+                                </div>
+                                {% endif %}
+                                
+                                {% if product.deal_score %}
+                                <div class="billion-price-detail">
+                                    <i class="fas fa-fire"></i> Deal Score: {{ product.deal_score }}/100
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="billion-action-buttons">
+                            <a href="{{ product.product_url }}" target="_blank" class="billion-buy-btn billion-buy-now">
+                                <i class="fas fa-bolt billion-action-icon"></i> Buy Now
+                            </a>
+                            <a href="#" class="billion-buy-btn billion-add-cart">
+                                <i class="fas fa-shopping-cart billion-action-icon"></i> Add to Cart
+                            </a>
+                            <a href="#" class="billion-buy-btn billion-wishlist">
+                                <i class="far fa-heart billion-action-icon"></i> Add to Wishlist
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Specifications Tabs -->
+            <div class="billion-specs-section">
+                <h2 class="billion-specs-title">Technical Specifications</h2>
+                
+                <div class="billion-specs-container">
+                    <div class="billion-specs-tabs">
+                        <button class="billion-specs-tab active" data-tab="specs">Specifications</button>
+                        <button class="billion-specs-tab" data-tab="details">Details</button>
+                        <button class="billion-specs-tab" data-tab="shipping">Shipping</button>
+                        <button class="billion-specs-tab" data-tab="warranty">Warranty</button>
+                    </div>
+                    
+                    <div class="billion-specs-content">
+                        <div class="billion-specs-panel active" id="specs-panel">
+                            <div class="billion-specs-list">
+                                {% if product.specifications %}
+                                    {% for spec_name, spec_value in product.specifications.items() %}
+                                    <div class="billion-spec-item">
+                                        <div class="billion-spec-name">{{ spec_name }}</div>
+                                        <div class="billion-spec-value">{{ spec_value }}</div>
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <p class="text-center">No specifications available.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="billion-specs-panel" id="details-panel">
+                            <p>Additional product details will be displayed here.</p>
+                        </div>
+                        
+                        <div class="billion-specs-panel" id="shipping-panel">
+                            <p>Shipping information will be displayed here.</p>
+                        </div>
+                        
+                        <div class="billion-specs-panel" id="warranty-panel">
+                            <p>Warranty information will be displayed here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI Assistant Section -->
+            <div class="billion-ai-assistant">
+                <div class="billion-ai-badge">
+                    <i class="fas fa-robot"></i> AI Powered
+                </div>
+                
+                <h2 class="billion-ai-title">
+                    <div class="billion-ai-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    Why You Should Buy This
+                </h2>
+                
+                <div class="billion-ai-content">
+                    <p>Based on your preferences and this product's features, our AI recommends this {{ product.name }} because:</p>
+                    
+                    <div class="billion-ai-highlights">
+                        <div class="billion-ai-highlight">
+                            <i class="fas fa-check-circle me-2"></i> Excellent Value
+                        </div>
+                        <div class="billion-ai-highlight">
+                            <i class="fas fa-check-circle me-2"></i> High Rating
+                        </div>
+                        <div class="billion-ai-highlight">
+                            <i class="fas fa-check-circle me-2"></i> Premium Features
+                        </div>
+                        <div class="billion-ai-highlight">
+                            <i class="fas fa-check-circle me-2"></i> Limited Time Offer
+                        </div>
+                    </div>
+                    
+                    <p>This product stands out in its category for offering an excellent balance of price and performance. Based on similar products you've viewed, this aligns with your preferences for premium quality items.</p>
+                </div>
+                
+                <div class="billion-ai-actions">
+                    <button class="billion-ai-btn">
+                        <i class="fas fa-thumbs-up"></i> Helpful
+                    </button>
+                    <button class="billion-ai-btn">
+                        <i class="fas fa-thumbs-down"></i> Not Helpful
+                    </button>
+                    <button class="billion-ai-btn">
+                        <i class="fas fa-question-circle"></i> Ask a Question
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Compare with Similar Products Section -->
+            <div class="billion-compare-section">
+                <h2 class="billion-compare-title">Compare Similar Products</h2>
+                
+                <div class="billion-compare-container">
+                    <!-- Product comparison cards would be generated here -->
+                    <div class="billion-compare-card">
+                        <div class="billion-compare-img">
+                            <img src="https://via.placeholder.com/200x200?text=Similar+Product" alt="Similar Product">
+                        </div>
+                        <div class="billion-compare-content">
+                            <div class="billion-compare-platform amazon-badge">Amazon</div>
+                            <h3 class="billion-compare-name">Similar Premium Product</h3>
+                            <div class="billion-compare-price">
+                                <div class="billion-compare-current">$199.99</div>
+                                <div class="billion-compare-original">$249.99</div>
+                            </div>
+                            <a href="#" class="billion-compare-btn">Compare</a>
+                        </div>
+                    </div>
+
+                    <div class="billion-compare-card">
+                        <div class="billion-compare-img">
+                            <img src="https://via.placeholder.com/200x200?text=Similar+Product" alt="Similar Product">
+                        </div>
+                        <div class="billion-compare-content">
+                            <div class="billion-compare-platform walmart-badge">Walmart</div>
+                            <h3 class="billion-compare-name">Another Similar Product</h3>
+                            <div class="billion-compare-price">
+                                <div class="billion-compare-current">$189.99</div>
+                                <div class="billion-compare-original">$219.99</div>
+                            </div>
+                            <a href="#" class="billion-compare-btn">Compare</a>
+                        </div>
+                    </div>
+
+                    <div class="billion-compare-card">
+                        <div class="billion-compare-img">
+                            <img src="https://via.placeholder.com/200x200?text=Similar+Product" alt="Similar Product">
+                        </div>
+                        <div class="billion-compare-content">
+                            <div class="billion-compare-platform bestbuy-badge">Best Buy</div>
+                            <h3 class="billion-compare-name">Premium Alternative</h3>
+                            <div class="billion-compare-price">
+                                <div class="billion-compare-current">$209.99</div>
+                                <div class="billion-compare-original">$259.99</div>
+                            </div>
+                            <a href="#" class="billion-compare-btn">Compare</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recommended Products Section -->
+            <div class="billion-recom-section">
+                <h2 class="billion-recom-title">Recommended For You</h2>
+                
+                <div class="billion-recom-grid">
+                    <!-- Recommended product cards would be generated here -->
+                    <div class="billion-recom-card">
+                        <div class="billion-recom-img">
+                            <img src="https://via.placeholder.com/200x200?text=Recommended" alt="Recommended Product">
+                        </div>
+                        <div class="billion-recom-content">
+                            <h3 class="billion-recom-name">Recommended Product 1</h3>
+                            <div class="billion-recom-price">$149.99</div>
+                            <a href="#" class="billion-recom-btn">View Product</a>
+                        </div>
+                    </div>
+
+                    <div class="billion-recom-card">
+                        <div class="billion-recom-img">
+                            <img src="https://via.placeholder.com/200x200?text=Recommended" alt="Recommended Product">
+                        </div>
+                        <div class="billion-recom-content">
+                            <h3 class="billion-recom-name">Recommended Product 2</h3>
+                            <div class="billion-recom-price">$199.99</div>
+                            <a href="#" class="billion-recom-btn">View Product</a>
+                        </div>
+                    </div>
+
+                    <div class="billion-recom-card">
+                        <div class="billion-recom-img">
+                            <img src="https://via.placeholder.com/200x200?text=Recommended" alt="Recommended Product">
+                        </div>
+                        <div class="billion-recom-content">
+                            <h3 class="billion-recom-name">Recommended Product 3</h3>
+                            <div class="billion-recom-price">$129.99</div>
+                            <a href="#" class="billion-recom-btn">View Product</a>
+                        </div>
+                    </div>
+
+                    <div class="billion-recom-card">
+                        <div class="billion-recom-img">
+                            <img src="https://via.placeholder.com/200x200?text=Recommended" alt="Recommended Product">
+                        </div>
+                        <div class="billion-recom-content">
+                            <h3 class="billion-recom-name">Recommended Product 4</h3>
+                            <div class="billion-recom-price">$179.99</div>
+                            <a href="#" class="billion-recom-btn">View Product</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gallery functionality
+        const galleryMain = document.querySelector('.billion-gallery-main');
+        const mainImage = document.querySelector('.billion-main-image');
+        const galleryThumbs = document.querySelectorAll('.billion-gallery-thumb');
+        const galleryPrev = document.querySelector('.billion-gallery-prev');
+        const galleryNext = document.querySelector('.billion-gallery-next');
+        const modeButtons = document.querySelectorAll('.billion-mode-btn');
+        const threeDView = document.querySelector('.billion-3d-view');
+        const threeDClose = document.querySelector('.billion-3d-close');
+        
+        // Current image index
+        let currentImageIndex = 0;
+        
+        // View mode
+        let currentMode = 'normal';
+        
+        // Switch thumbnail
+        galleryThumbs.forEach((thumb, index) => {
+            thumb.addEventListener('click', function() {
+                galleryThumbs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const imgSrc = this.getAttribute('data-src');
+                mainImage.src = imgSrc;
+                currentImageIndex = index;
+            });
+        });
+        
+        // Previous image
+        if (galleryPrev) {
+            galleryPrev.addEventListener('click', function() {
+                if (galleryThumbs.length <= 1) return;
+                
+                currentImageIndex = (currentImageIndex - 1 + galleryThumbs.length) % galleryThumbs.length;
+                galleryThumbs[currentImageIndex].click();
+            });
+        }
+        
+        // Next image
+        if (galleryNext) {
+            galleryNext.addEventListener('click', function() {
+                if (galleryThumbs.length <= 1) return;
+                
+                currentImageIndex = (currentImageIndex + 1) % galleryThumbs.length;
+                galleryThumbs[currentImageIndex].click();
+            });
+        }
+        
+        // View mode buttons
+        modeButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const mode = this.getAttribute('data-mode');
+                
+                modeButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                currentMode = mode;
+                
+                if (mode === '360' || mode === 'ar') {
+                    threeDView.classList.add('active');
+                } else {
+                    threeDView.classList.remove('active');
+                }
+            });
+        });
+        
+        // Close 3D view
+        if (threeDClose) {
+            threeDClose.addEventListener('click', function() {
+                threeDView.classList.remove('active');
+                modeButtons[0].click(); // Switch back to normal mode
+            });
+        }
+        
+        // Specifications tabs functionality
+        const specsTabs = document.querySelectorAll('.billion-specs-tab');
+        const specsPanels = document.querySelectorAll('.billion-specs-panel');
+        
+        specsTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                // Update active tab
+                specsTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update active panel
+                specsPanels.forEach(p => p.classList.remove('active'));
+                document.getElementById(`${tabId}-panel`).classList.add('active');
+            });
+        });
+        
+        // AI Assistant buttons
+        const aiButtons = document.querySelectorAll('.billion-ai-btn');
+        
+        aiButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Simulate interaction feedback
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-check"></i> Thank you for your feedback';
+                
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                }, 2000);
+            });
+        });
+        
+        // Add animation to elements when they come into view
+        const animateElements = document.querySelectorAll(
+            '.billion-product-gallery, .billion-product-info, .billion-specs-section, ' +
+            '.billion-ai-assistant, .billion-compare-section, .billion-recom-section'
+        );
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        animateElements.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            observer.observe(el);
+        });
+    });
+</script>
+{% endblock %}

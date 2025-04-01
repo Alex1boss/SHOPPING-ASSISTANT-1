@@ -1,0 +1,130 @@
+{% extends 'base_mobile.html' %}
+
+{% block title %}Search History - ShopAI{% endblock %}
+
+{% block content %}
+<div class="section-title">
+    Search History
+    <button id="clearHistoryBtn" class="btn btn-sm btn-outline-danger">Clear All</button>
+</div>
+
+<div class="p-3">
+    {% if queries and queries|length > 0 %}
+        <div class="history-list">
+            {% for query in queries %}
+                <div class="history-item mb-3">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span class="search-query">{{ query.query_text }}</span>
+                            <small class="text-muted">{{ query.formatted_date() }}</small>
+                        </div>
+                        {% if query.recommendations and query.recommendations|length > 0 %}
+                            <div class="card-body p-0">
+                                <div class="history-recommendations">
+                                    {% for rec in query.recommendations %}
+                                        <div class="history-product d-flex align-items-center p-2 border-bottom">
+                                            {% if rec.image_url %}
+                                                <img src="{{ rec.image_url }}" alt="{{ rec.name }}" class="history-product-img me-3" style="width: 50px; height: 50px; object-fit: contain;">
+                                            {% else %}
+                                                <div class="history-product-img-placeholder me-3 d-flex align-items-center justify-content-center bg-light" style="width: 50px; height: 50px;">
+                                                    <i class="fas fa-image text-muted"></i>
+                                                </div>
+                                            {% endif %}
+                                            <div class="history-product-info">
+                                                <h6 class="history-product-title mb-1" style="font-size: 0.85rem;">{{ rec.name }}</h6>
+                                                <div class="d-flex align-items-center">
+                                                    {% if rec.price %}
+                                                        <span class="history-product-price me-2" style="font-size: 0.8rem; font-weight: bold;">₹{{ "%.2f"|format(rec.price) }}</span>
+                                                    {% elif rec.price_range %}
+                                                        <span class="history-product-price me-2" style="font-size: 0.8rem; font-weight: bold;">{{ rec.price_range }}</span>
+                                                    {% endif %}
+                                                    {% if rec.platform %}
+                                                        <span class="badge bg-light text-dark" style="font-size: 0.7rem;">{{ rec.platform }}</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="card-footer p-2 text-center">
+                                <a href="/search?query={{ query.query_text }}" class="btn btn-sm btn-primary">Search Again</a>
+                                {% if query.search_type == 'super_deal' %}
+                                    <a href="/super-deal?query={{ query.query_text }}" class="btn btn-sm btn-warning">Find Super Deal</a>
+                                {% elif query.search_type == 'all_deals' %}
+                                    <a href="/all-deals?query={{ query.query_text }}" class="btn btn-sm btn-info">All Platform Deals</a>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="card-body text-center p-3">
+                                <p class="text-muted mb-0">No recommendations found</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-history fa-3x text-muted mb-3"></i>
+            <h5>No Search History</h5>
+            <p class="text-muted">Your search history will appear here</p>
+            <a href="/" class="btn btn-primary">Start Searching</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Clear history button functionality
+        const clearBtn = document.getElementById('clearHistoryBtn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear your search history?')) {
+                    fetch('/api/history/clear', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showSuccess('History cleared successfully');
+                            // Reload the page after a short delay
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        } else {
+                            showError('Failed to clear history: ' + (data.error || 'Unknown error'));
+                        }
+                    })
+                    .catch(error => {
+                        showError('Error: ' + error.message);
+                    });
+                }
+            });
+        }
+        
+        // Add animation to history items
+        const historyItems = document.querySelectorAll('.history-item');
+        historyItems.forEach(item => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        });
+        
+        // Animate items appearing with a slight delay between each
+        setTimeout(() => {
+            historyItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        }, 300);
+    });
+</script>
+{% endblock %}

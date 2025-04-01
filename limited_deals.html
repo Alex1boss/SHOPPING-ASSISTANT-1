@@ -1,0 +1,422 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}Limited-Time Deals - ShopAI{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <header class="app-header">
+        <div class="back-button" onclick="history.back()">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <h1 class="page-title">Limited-Time Deals</h1>
+    </header>
+
+    <div class="deals-container">
+        <div class="deals-countdown">
+            <div class="countdown-title">Deals Refresh In:</div>
+            <div class="countdown-timer" id="countdown-timer">
+                <div class="countdown-unit">
+                    <span class="countdown-value" id="hours">00</span>
+                    <span class="countdown-label">Hours</span>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-unit">
+                    <span class="countdown-value" id="minutes">00</span>
+                    <span class="countdown-label">Minutes</span>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-unit">
+                    <span class="countdown-value" id="seconds">00</span>
+                    <span class="countdown-label">Seconds</span>
+                </div>
+            </div>
+        </div>
+        
+        {% if deals %}
+            <div class="deals-grid">
+                {% for deal in deals %}
+                    <div class="deal-card" data-end-time="{{ deal.end_time }}">
+                        <div class="deal-badge">
+                            <span class="discount-badge">-{{ deal.discount_percent }}%</span>
+                        </div>
+                        
+                        <div class="deal-timer">
+                            <i class="fas fa-clock"></i>
+                            <span class="timer-value" data-end="{{ deal.end_time }}">Loading...</span>
+                        </div>
+                        
+                        {% if deal.image_url %}
+                            <div class="deal-image">
+                                <img src="{{ deal.image_url }}" alt="{{ deal.name }}">
+                            </div>
+                        {% else %}
+                            <div class="deal-image deal-placeholder">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="deal-content">
+                            <div class="deal-platform">{{ deal.platform }}</div>
+                            <h3 class="deal-title">{{ deal.name }}</h3>
+                            <p class="deal-description">{{ deal.description }}</p>
+                            
+                            <div class="deal-pricing">
+                                <span class="deal-price">{{ format_price(deal.deal_price) }}</span>
+                                <span class="original-price">{{ format_price(deal.original_price) }}</span>
+                            </div>
+                            
+                            <div class="stock-status">
+                                <div class="stock-info">
+                                    <span class="stock-label">Stock:</span>
+                                    <span class="stock-percentage">{{ (deal.stock_remaining / deal.total_stock) * 100 | int }}%</span>
+                                </div>
+                                <div class="stock-bar">
+                                    <div class="stock-progress" style="width: {{ (deal.stock_remaining / deal.total_stock) * 100 }}%"></div>
+                                </div>
+                            </div>
+                            
+                            <a href="{{ deal.product_url }}" class="deal-action-button" target="_blank">
+                                Get Deal Now
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-bolt"></i>
+                <p>No limited-time deals available at the moment. Check back soon for flash sales and lightning deals!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set a future date for countdown (12 hours from now)
+        const refreshTime = new Date();
+        refreshTime.setHours(refreshTime.getHours() + 12);
+        
+        // Update countdown timer
+        function updateCountdown() {
+            const now = new Date();
+            const diff = refreshTime - now;
+            
+            if (diff <= 0) {
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                return;
+            }
+            
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+        
+        // Update individual deal timers
+        function updateDealTimers() {
+            const timerElements = document.querySelectorAll('.timer-value');
+            
+            timerElements.forEach(element => {
+                const endTimeStr = element.getAttribute('data-end');
+                if (!endTimeStr) return;
+                
+                const endTime = new Date(endTimeStr);
+                const now = new Date();
+                const diff = endTime - now;
+                
+                if (diff <= 0) {
+                    element.textContent = 'Deal Ended';
+                    element.classList.add('ended');
+                    return;
+                }
+                
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                if (hours > 0) {
+                    element.textContent = `${hours}h ${minutes}m left`;
+                } else if (minutes > 0) {
+                    element.textContent = `${minutes}m ${seconds}s left`;
+                } else {
+                    element.textContent = `${seconds}s left`;
+                }
+                
+                // Add urgency classes
+                if (diff < 1000 * 60 * 60) { // Less than 1 hour
+                    element.classList.add('urgent');
+                } else if (diff < 1000 * 60 * 60 * 3) { // Less than 3 hours
+                    element.classList.add('warning');
+                }
+            });
+        }
+        
+        // Initial updates
+        updateCountdown();
+        updateDealTimers();
+        
+        // Set intervals for updates
+        setInterval(updateCountdown, 1000);
+        setInterval(updateDealTimers, 1000);
+    });
+</script>
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .deals-container {
+        padding: 20px;
+    }
+    
+    .deals-countdown {
+        background: linear-gradient(135deg, #ff6b6b 0%, #cc0000 100%);
+        color: white;
+        border-radius: 16px;
+        padding: 15px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .countdown-title {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    
+    .countdown-timer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .countdown-unit {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .countdown-value {
+        font-size: 1.8rem;
+        font-weight: bold;
+    }
+    
+    .countdown-label {
+        font-size: 0.7rem;
+        opacity: 0.9;
+    }
+    
+    .countdown-separator {
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin: 0 5px;
+    }
+    
+    .deals-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+    }
+    
+    .deal-card {
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        background-color: white;
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .deal-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+    
+    .deal-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 1;
+    }
+    
+    .discount-badge {
+        display: inline-block;
+        background-color: #ff6b6b;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+    
+    .deal-timer {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: rgba(0,0,0,0.7);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        font-size: 0.8rem;
+        z-index: 1;
+    }
+    
+    .deal-timer i {
+        margin-right: 5px;
+    }
+    
+    .timer-value.warning {
+        color: #ffcc00;
+    }
+    
+    .timer-value.urgent {
+        color: #ff6b6b;
+        animation: pulse 1s infinite;
+    }
+    
+    .timer-value.ended {
+        color: #ff6b6b;
+    }
+    
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+    
+    .deal-image {
+        height: 180px;
+        overflow: hidden;
+    }
+    
+    .deal-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .deal-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #ff6b6b 0%, #cc0000 100%);
+        color: white;
+    }
+    
+    .deal-placeholder i {
+        font-size: 3rem;
+    }
+    
+    .deal-content {
+        padding: 15px;
+    }
+    
+    .deal-platform {
+        font-size: 0.8rem;
+        color: #666;
+        margin-bottom: 5px;
+    }
+    
+    .deal-title {
+        margin-top: 0;
+        margin-bottom: 8px;
+        font-size: 1.2rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .deal-description {
+        color: #555;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .deal-pricing {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .deal-price {
+        font-weight: bold;
+        font-size: 1.3rem;
+        color: #ff6b6b;
+        margin-right: 10px;
+    }
+    
+    .original-price {
+        text-decoration: line-through;
+        color: #999;
+    }
+    
+    .stock-status {
+        margin-bottom: 15px;
+    }
+    
+    .stock-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        font-size: 0.8rem;
+        color: #666;
+    }
+    
+    .stock-bar {
+        height: 6px;
+        background-color: #f0f0f0;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+    
+    .stock-progress {
+        height: 100%;
+        background-color: #ff6b6b;
+        border-radius: 3px;
+    }
+    
+    .deal-action-button {
+        display: block;
+        background-color: #ff6b6b;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: 500;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+    
+    .deal-action-button:hover {
+        background-color: #e05050;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: #ff6b6b;
+        opacity: 0.5;
+    }
+</style>
+{% endblock %}

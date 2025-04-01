@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ShopAI - Smart Shopping Assistant{% endblock %}</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #8a2be2;
+            --secondary-color: #f5f5f5;
+            --accent-color: #ff4757;
+            --text-color: #333;
+            --light-text: #666;
+            --white: #fff;
+            --border-color: #eee;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            
+            /* Category colors */
+            --mobiles-color: #ff6b6b;
+            --electronics-color: #54a0ff;
+            --home-color: #1dd1a1;
+            --fashion-color: #feca57;
+            --beauty-color: #ff9ff3;
+            --jewelry-color: #00d2d3;
+            
+            /* Deal button colors */
+            --super-deal-color: #ffdd59;
+            --platform-deals-color: #48dbfb;
+            --trending-deals-color: #ff6b6b;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+            padding-top: 0;
+            margin: 0;
+            padding-bottom: 70px; /* Space for bottom nav */
+        }
+        
+        /* Header */
+        .shop-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .shop-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .shop-logo i {
+            margin-right: 8px;
+        }
+        
+        .menu-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        /* Search bar */
+        .search-bar {
+            padding: 15px;
+            background-color: var(--primary-color);
+        }
+        
+        .input-group {
+            position: relative;
+            display: flex;
+            width: 100%;
+        }
+        
+        .search-input {
+            border-radius: 50px;
+            border: none;
+            padding: 10px 45px 10px 20px;
+            width: 100%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-actions {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-action-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+        
+        .search-action-btn:hover, .search-action-btn:active {
+            background-color: rgba(138, 43, 226, 0.1);
+        }
+        
+        /* Voice search modal */
+        .voice-animation {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .voice-wave {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: rgba(138, 43, 226, 0.1);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(0.5);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+        
+        /* Image upload area - Feature removed */
+        
+        /* Categories */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 15px;
+        }
+        
+        .category-card {
+            background-color: white;
+            border-radius: 10px;
+            text-align: center;
+            padding: 15px;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s;
+        }
+        
+        .category-card:hover, .category-card:active {
+            transform: translateY(-5px);
+        }
+        
+        .category-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            border-radius: 50%;
+            margin: 0 auto 8px;
+            color: white;
+        }
+        
+        .category-icon.mobiles { background-color: var(--mobiles-color); }
+        .category-icon.electronics { background-color: var(--electronics-color); }
+        .category-icon.home { background-color: var(--home-color); }
+        .category-icon.fashion { background-color: var(--fashion-color); }
+        .category-icon.beauty { background-color: var(--beauty-color); }
+        .category-icon.jewelry { background-color: var(--jewelry-color); }
+        
+        .category-name {
+            font-size: 0.85rem;
+            color: var(--text-color);
+            margin: 0;
+        }
+        
+        /* Featured product */
+        .featured-product {
+            background: linear-gradient(to right, #8a2be2, #9b59b6);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .featured-title {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .featured-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .featured-badge {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            margin-bottom: 10px;
+        }
+        
+        .shop-now-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: none;
+            border-radius: 5px;
+            padding: 5px 15px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        /* Section titles */
+        .section-title {
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .view-all {
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        /* Deal buttons */
+        .deals-buttons {
+            display: flex;
+            gap: 10px;
+            padding: 10px 15px;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none; /* Hide scrollbar for Firefox */
+        }
+        
+        .deals-buttons::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for Chrome/Safari */
+        }
+        
+        .deal-button {
+            padding: 8px 20px;
+            border-radius: 50px;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            color: var(--text-color);
+        }
+        
+        .deal-button i {
+            margin-right: 5px;
+        }
+        
+        .deal-button.super-deal {
+            background-color: var(--super-deal-color);
+        }
+        
+        .deal-button.platform-deals {
+            background-color: var(--platform-deals-color);
+        }
+        
+        .deal-button.trending {
+            background-color: var(--trending-deals-color);
+            color: white;
+        }
+        
+        /* Product card */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 15px;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 150px;
+            object-fit: contain;
+            background-color: #f5f5f5;
+            padding: 10px;
+        }
+        
+        .product-content {
+            padding: 12px;
+        }
+        
+        .product-platform {
+            display: inline-block;
+            font-size: 0.7rem;
+            color: var(--light-text);
+            margin-bottom: 5px;
+            background-color: #f5f5f5;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+        
+        .product-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 40px;
+        }
+        
+        .product-price {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .product-original-price {
+            font-size: 0.8rem;
+            text-decoration: line-through;
+            color: var(--light-text);
+        }
+        
+        .product-rating {
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .product-rating .stars {
+            color: #ffc107;
+            margin-right: 5px;
+        }
+        
+        .product-action {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .btn-cart {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+        }
+        
+        .discount-badge {
+            display: inline-block;
+            background-color: #ff4757;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+        
+        /* Bottom navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid var(--border-color);
+            z-index: 1000;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--light-text);
+            text-decoration: none;
+            font-size: 0.7rem;
+        }
+        
+        .nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+        
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+        
+        /* Alerts */
+        .alert-container {
+            padding: 10px 15px;
+        }
+        
+        /* Voice Search Animation */
+        .voice-animation {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .voice-wave {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: var(--primary-color);
+            opacity: 0.1;
+            border-radius: 50%;
+            animation: voice-wave 2s infinite ease-out;
+            animation-play-state: paused;
+        }
+        
+        .voice-wave:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+        
+        .voice-wave:nth-child(3) {
+            animation-delay: 0.8s;
+        }
+        
+        .voice-wave:nth-child(4) {
+            animation-delay: 1.2s;
+        }
+        
+        .voice-wave:nth-child(5) {
+            animation-delay: 1.6s;
+        }
+        
+        @keyframes voice-wave {
+            0% {
+                transform: scale(0.5);
+                opacity: 0.1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+        
+        /* Additional Styles */
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="shop-header">
+        <div class="shop-logo">
+            <i class="fas fa-shopping-cart"></i> ShopAI
+        </div>
+        <button class="menu-button">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+    
+    <!-- Advanced Search Bar -->
+    <div class="search-bar">
+        <form action="/super-deal" method="get" id="searchForm">
+            <div class="input-group">
+                <input type="text" class="search-input" name="query" id="searchInput" placeholder="Search for products...">
+                <div class="search-actions">
+                    <button type="button" id="voiceSearchBtn" class="search-action-btn">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button type="submit" class="search-action-btn" style="background-color: var(--primary-color); color: white;">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Voice Search Modal -->
+    <div class="modal fade" id="voiceSearchModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Voice Search</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <div class="voice-animation mb-3">
+                        <div class="voice-wave"></div>
+                        <div class="voice-wave"></div>
+                        <div class="voice-wave"></div>
+                        <div class="voice-wave"></div>
+                        <div class="voice-wave"></div>
+                        <i class="fas fa-microphone fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="mb-3">Listening...</h5>
+                    <p class="text-muted mb-3" id="voiceText">Speak now to search for products</p>
+                    <div class="small text-muted mb-3">
+                        <i class="fas fa-info-circle me-1"></i> 
+                        Using Web Speech API - requires microphone permission
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    
+    <!-- Alerts Container -->
+    <div class="alert-container" id="alertsContainer">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    
+    <!-- Main Content -->
+    {% block content %}{% endblock %}
+    
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="/" class="nav-item {% if request.path == '/' %}active{% endif %}">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="/categories" class="nav-item {% if '/categories' in request.path %}active{% endif %}">
+            <i class="fas fa-th-large"></i>
+            <span>Categories</span>
+        </a>
+        <a href="/super-deal" class="nav-item {% if '/super-deal' in request.path %}active{% endif %}">
+            <i class="fas fa-bolt"></i>
+            <span>Deals</span>
+        </a>
+        <a href="#" class="nav-item" data-bs-toggle="modal" data-bs-target="#advancedFeaturesModal">
+            <i class="fas fa-star"></i>
+            <span>Features</span>
+        </a>
+        <a href="/history" class="nav-item {% if '/history' in request.path %}active{% endif %}">
+            <i class="fas fa-history"></i>
+            <span>History</span>
+        </a>
+    </nav>
+    
+    <!-- Advanced Features Modal -->
+    <div class="modal fade" id="advancedFeaturesModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">AI Shopping Features</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="list-group">
+                        <a href="/shop-by-need" class="list-group-item list-group-item-action d-flex align-items-center">
+                            <div class="feature-icon" style="background-color: #8a2be2;">
+                                <i class="fas fa-shopping-basket"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0">Shop by Need</h6>
+                                <small class="text-muted">Find products that meet your specific needs</small>
+                            </div>
+                        </a>
+                        <a href="/ai-assistant" class="list-group-item list-group-item-action d-flex align-items-center">
+                            <div class="feature-icon" style="background-color: #4285F4;">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0">AI Shopping Assistant</h6>
+                                <small class="text-muted">Get personalized product recommendations</small>
+                            </div>
+                        </a>
+                        <a href="/trending" class="list-group-item list-group-item-action d-flex align-items-center">
+                            <div class="feature-icon" style="background-color: #FF5722;">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0">Trending Categories</h6>
+                                <small class="text-muted">Discover what's popular right now</small>
+                            </div>
+                        </a>
+                        <a href="/bundles" class="list-group-item list-group-item-action d-flex align-items-center">
+                            <div class="feature-icon" style="background-color: #34A853;">
+                                <i class="fas fa-box-open"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0">AI Smart Bundles</h6>
+                                <small class="text-muted">Save with intelligently curated product bundles</small>
+                            </div>
+                        </a>
+                        <a href="/eco-friendly" class="list-group-item list-group-item-action d-flex align-items-center">
+                            <div class="feature-icon" style="background-color: #4CAF50;">
+                                <i class="fas fa-leaf"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0">Eco-Friendly Products</h6>
+                                <small class="text-muted">Shop sustainably with eco-conscious options</small>
+                            </div>
+                        </a>
+                        <a href="/limited-deals" class="list-group-item list-group-item-action d-flex align-items-center">
+                            <div class="feature-icon" style="background-color: #FF6B6B;">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0">Limited-Time Deals</h6>
+                                <small class="text-muted">Catch flash sales before they're gone</small>
+                            </div>
+                        </a>
+                        <a href="/made-in-india" class="list-group-item list-group-item-action d-flex align-items-center">
+                            <div class="feature-icon" style="background-color: #FF9933;">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0">Made in India</h6>
+                                <small class="text-muted">Support local Indian products and sellers</small>
+                            </div>
+                        </a>
+                        <a href="/personalized" class="list-group-item list-group-item-action d-flex align-items-center">
+                            <div class="feature-icon" style="background-color: #6A11CB;">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0">Personalized For You</h6>
+                                <small class="text-muted">Recommendations based on your shopping history</small>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+        }
+    </style>
+    
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Common JavaScript functions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Close alert buttons
+            document.querySelectorAll('.alert .btn-close').forEach(button => {
+                button.addEventListener('click', function() {
+                    this.parentElement.style.display = 'none';
+                });
+            });
+            
+            // Setup search form submission with category detection
+            const searchForm = document.getElementById('searchForm');
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const query = document.getElementById('searchInput').value;
+                    if (query && query.trim() !== '') {
+                        // In a real app, navigate to search results
+                        showSuccess(`Searching for: "${query}"`);
+                        
+                        // Detect product category from search term
+                        const productCategories = {
+                            "phone": ["smartphone", "iphone", "samsung", "android", "pixel", "redmi", "oneplus", "mobile"],
+                            "laptop": ["laptop", "notebook", "macbook", "dell", "hp", "lenovo", "asus", "computer"],
+                            "headphone": ["headphone", "earphone", "earbud", "airpod", "audio", "sound", "music"],
+                            "watch": ["watch", "smartwatch", "fitness tracker", "wearable"],
+                            "camera": ["camera", "dslr", "mirrorless", "canon", "nikon", "sony"],
+                            "tv": ["tv", "television", "smart tv", "qled", "oled", "monitor", "screen"],
+                            "tablet": ["tablet", "ipad", "surface", "android tablet"],
+                            "speaker": ["speaker", "bluetooth speaker", "sound", "audio", "sonos", "bose"],
+                            "gaming": ["gaming", "console", "playstation", "xbox", "nintendo", "game"]
+                        };
+                        
+                        let detectedCategory = '';
+                        const queryLower = query.toLowerCase();
+                        
+                        for (const [category, keywords] of Object.entries(productCategories)) {
+                            if (keywords.some(keyword => 
+                                queryLower.includes(keyword) || 
+                                keyword.includes(queryLower)
+                            )) {
+                                detectedCategory = category;
+                                break;
+                            }
+                        }
+                        
+                        // Redirect to super-deal with category parameter if detected
+                        window.location.href = `/super-deal?query=${encodeURIComponent(query)}${detectedCategory ? '&category=' + detectedCategory : ''}`;
+                    } else {
+                        showError('Please enter a search term');
+                    }
+                });
+            }
+            
+            // Setup voice search functionality with Web Speech API and improved product category recognition
+            const voiceSearchBtn = document.getElementById('voiceSearchBtn');
+            const voiceSearchModal = new bootstrap.Modal(document.getElementById('voiceSearchModal'));
+            
+            if (voiceSearchBtn) {
+                // Initialize arrays for different product categories
+                const productCategories = {
+                    "phone": ["smartphone", "iphone", "samsung phone", "android phone", "google pixel", "redmi", "oneplus"],
+                    "laptop": ["laptop", "notebook", "macbook", "dell laptop", "hp laptop", "gaming laptop", "ultrabook"],
+                    "headphone": ["headphones", "earbuds", "wireless earphones", "sony headphones", "airpods", "noise cancelling headphones"],
+                    "watch": ["smartwatch", "apple watch", "fitness tracker", "samsung watch", "garmin watch"],
+                    "camera": ["digital camera", "dslr", "mirrorless camera", "sony camera", "canon camera", "nikon camera"],
+                    "tv": ["television", "smart tv", "4k tv", "samsung tv", "lg tv", "oled tv", "qled tv"],
+                    "tablet": ["tablet", "ipad", "samsung tablet", "android tablet", "kindle"],
+                    "speaker": ["bluetooth speaker", "smart speaker", "wireless speaker", "soundbar", "home theater"],
+                    "gaming": ["gaming console", "playstation", "xbox", "nintendo switch", "steam deck", "gaming pc"]
+                };
+                
+                // Flatten the array for random selection if needed
+                const allProducts = Object.values(productCategories).flat();
+                
+                // Create a function to process the voice input
+                const processVoiceSearch = (recognizedTerm = '') => {
+                    // If no input was recognized, use a random product as fallback
+                    if (!recognizedTerm) {
+                        recognizedTerm = allProducts[Math.floor(Math.random() * allProducts.length)];
+                    }
+                    
+                    const voiceText = document.getElementById('voiceText');
+                    const searchInput = document.getElementById('searchInput');
+                    
+                    if (voiceText) {
+                        // Show what we heard
+                        voiceText.innerHTML = `Recognized: "${recognizedTerm}"`;
+                        
+                        // Pause the "listening" animation
+                        const voiceWaves = document.querySelectorAll('.voice-wave');
+                        if (voiceWaves.length > 0) {
+                            voiceWaves.forEach(wave => {
+                                wave.style.animationPlayState = 'paused';
+                            });
+                        }
+                        
+                        // After a short delay, process the search
+                        setTimeout(() => {
+                            voiceSearchModal.hide();
+                            
+                            // Update the search input with the recognized term
+                            if (searchInput) {
+                                searchInput.value = recognizedTerm;
+                            }
+                            
+                            const searchForm = document.getElementById('searchForm');
+                            if (searchForm) {
+                                showSuccess(`Voice search recognized: "${recognizedTerm}"`);
+                                
+                                // Find which category this product belongs to (if any)
+                                let detectedCategory = '';
+                                for (const [category, terms] of Object.entries(productCategories)) {
+                                    if (terms.some(term => 
+                                        recognizedTerm.toLowerCase().includes(term.toLowerCase()) || 
+                                        term.toLowerCase().includes(recognizedTerm.toLowerCase())
+                                    )) {
+                                        detectedCategory = category;
+                                        break;
+                                    }
+                                }
+                                
+                                // Navigate to search with category info
+                                if (searchForm.checkValidity()) {
+                                    window.location.href = `/super-deal?query=${encodeURIComponent(recognizedTerm)}${detectedCategory ? '&category=' + detectedCategory : ''}`;
+                                }
+                            }
+                        }, 1000);
+                    }
+                };
+                
+                // Function to start real voice recognition using Web Speech API
+                const startVoiceRecognition = () => {
+                    // Check if browser supports speech recognition
+                    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                        showError('Speech recognition is not supported in this browser. Try using Chrome, Edge, or Safari.');
+                        processVoiceSearch(''); // Use fallback
+                        return;
+                    }
+                    
+                    // Initialize speech recognition
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    const recognition = new SpeechRecognition();
+                    
+                    // Configure recognition settings
+                    recognition.lang = 'en-US';
+                    recognition.continuous = false;
+                    recognition.interimResults = false;
+                    recognition.maxAlternatives = 1;
+                    
+                    // Start recognition
+                    recognition.start();
+                    
+                    // When recognition starts
+                    recognition.onstart = function() {
+                        console.log('Voice recognition started');
+                        // Start the voice wave animation
+                        const voiceWaves = document.querySelectorAll('.voice-wave');
+                        if (voiceWaves.length > 0) {
+                            voiceWaves.forEach(wave => {
+                                wave.style.animationPlayState = 'running';
+                            });
+                        }
+                        
+                        // Update voice text
+                        const voiceText = document.getElementById('voiceText');
+                        if (voiceText) {
+                            voiceText.innerHTML = 'Listening...';
+                        }
+                    };
+                    
+                    // When results are available
+                    recognition.onresult = function(event) {
+                        const transcript = event.results[0][0].transcript;
+                        console.log('Voice recognized:', transcript);
+                        processVoiceSearch(transcript);
+                    };
+                    
+                    // If there's an error
+                    recognition.onerror = function(event) {
+                        console.error('Voice recognition error:', event.error);
+                        // Show error toast
+                        if (event.error === 'no-speech') {
+                            showError("No speech was detected. Please try again.");
+                        } else if (event.error === 'audio-capture') {
+                            showError("Microphone not found or permission denied.");
+                        } else if (event.error === 'not-allowed') {
+                            showError("Microphone permission was denied. Please allow microphone access.");
+                        } else {
+                            showError(`Error in speech recognition: ${event.error}`);
+                        }
+                        
+                        // Use fallback with empty string to trigger random product selection
+                        processVoiceSearch('');
+                    };
+                    
+                    // When recognition ends
+                    recognition.onend = function() {
+                        console.log('Voice recognition ended');
+                    };
+                    
+                    // Timeout for recognition (in case it doesn't end naturally)
+                    setTimeout(() => {
+                        if (recognition) {
+                            try {
+                                recognition.stop();
+                            } catch (e) {
+                                console.log('Recognition already stopped');
+                            }
+                        }
+                    }, 5000);
+                };
+                
+                // Attach click event to voice search button
+                voiceSearchBtn.addEventListener('click', function() {
+                    voiceSearchModal.show();
+                    
+                    // Start voice recognition after modal is shown
+                    setTimeout(() => {
+                        startVoiceRecognition();
+                    }, 500);
+                });
+            }
+            
+
+            
+            // Mobile menu button functionality
+            const menuButton = document.querySelector('.menu-button');
+            if (menuButton) {
+                menuButton.addEventListener('click', function() {
+                    // In a real app, this would toggle a side menu
+                    showSuccess('Menu functionality will be implemented in a future update');
+                });
+            }
+            
+            // Generic function to show errors
+            window.showError = function(message, containerId = 'alertsContainer') {
+                const container = document.getElementById(containerId);
+                if (!container) return; // Make sure container exists
+                
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-danger alert-dismissible fade show';
+                alert.role = 'alert';
+                alert.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                container.appendChild(alert);
+                
+                // Auto dismiss after 5 seconds
+                setTimeout(() => {
+                    if (alert && alert.parentNode === container) {
+                        alert.classList.remove('show');
+                        setTimeout(() => {
+                            if (alert && alert.parentNode === container) {
+                                container.removeChild(alert);
+                            }
+                        }, 150);
+                    }
+                }, 5000);
+            };
+            
+            // Generic function to show success messages
+            window.showSuccess = function(message, containerId = 'alertsContainer') {
+                const container = document.getElementById(containerId);
+                if (!container) return; // Make sure container exists
+                
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-success alert-dismissible fade show';
+                alert.role = 'alert';
+                alert.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                container.appendChild(alert);
+                
+                // Auto dismiss after 5 seconds
+                setTimeout(() => {
+                    if (alert && alert.parentNode === container) {
+                        alert.classList.remove('show');
+                        setTimeout(() => {
+                            if (alert && alert.parentNode === container) {
+                                container.removeChild(alert);
+                            }
+                        }, 150);
+                    }
+                }, 5000);
+            };
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

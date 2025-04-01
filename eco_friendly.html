@@ -1,0 +1,367 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}Eco-Friendly Products - ShopAI{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <header class="app-header">
+        <div class="back-button" onclick="history.back()">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <h1 class="page-title">Eco-Friendly Products</h1>
+    </header>
+
+    <div class="eco-friendly-container">
+        <div class="eco-banner">
+            <div class="eco-banner-content">
+                <h2>Shop Sustainably</h2>
+                <p>Discover products that are better for the planet. Our AI analyzes sustainability features, certifications, and environmental impact to help you make eco-conscious choices.</p>
+            </div>
+            <div class="eco-banner-icon">
+                <i class="fas fa-leaf"></i>
+            </div>
+        </div>
+        
+        <div class="eco-filters">
+            <button class="filter-button active" data-filter="all">All Products</button>
+            <button class="filter-button" data-filter="high-rating">Highest Eco Rating</button>
+            <button class="filter-button" data-filter="recyclable">Recyclable</button>
+            <button class="filter-button" data-filter="renewable">Renewable Materials</button>
+        </div>
+        
+        {% if eco_products %}
+            <div class="products-grid" id="eco-products-grid">
+                {% for product in eco_products %}
+                    <div class="eco-product-card" 
+                         data-eco-rating="{{ product.eco_rating }}" 
+                         data-recyclable="{{ product.recyclable|lower }}" 
+                         data-renewable="{{ product.renewable_materials|lower }}">
+                        <div class="eco-rating">
+                            <span class="eco-rating-value">{{ product.eco_rating }}/5</span>
+                            <div class="eco-rating-stars">
+                                {% for i in range(5) %}
+                                    {% if i < product.eco_rating|int %}
+                                        <i class="fas fa-star"></i>
+                                    {% elif i+0.5 < product.eco_rating %}
+                                        <i class="fas fa-star-half-alt"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        {% if product.image_url %}
+                            <div class="product-image">
+                                <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                            </div>
+                        {% else %}
+                            <div class="product-image product-placeholder">
+                                <i class="fas fa-box"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="product-content">
+                            <h3>{{ product.name }}</h3>
+                            <p class="product-platform">{{ product.platform }}</p>
+                            <p class="product-price">{{ format_price(product.price) }}</p>
+                            
+                            {% if product.certifications %}
+                                <div class="eco-certifications">
+                                    {% for cert in product.certifications %}
+                                        <span class="eco-certification">{{ cert }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            
+                            <div class="eco-features">
+                                {% if product.recyclable %}
+                                    <span class="eco-feature">
+                                        <i class="fas fa-recycle"></i> Recyclable
+                                    </span>
+                                {% endif %}
+                                
+                                {% if product.renewable_materials %}
+                                    <span class="eco-feature">
+                                        <i class="fas fa-seedling"></i> Renewable Materials
+                                    </span>
+                                {% endif %}
+                                
+                                {% if product.carbon_footprint %}
+                                    <span class="eco-feature">
+                                        <i class="fas fa-cloud"></i> {{ product.carbon_footprint }} kg CO₂
+                                    </span>
+                                {% endif %}
+                            </div>
+                            
+                            <a href="{{ product.product_url }}" class="product-action-button" target="_blank">
+                                View Product
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-leaf"></i>
+                <p>No eco-friendly products available at the moment. Check back soon for sustainable shopping options!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterButtons = document.querySelectorAll('.filter-button');
+        const productsGrid = document.getElementById('eco-products-grid');
+        const productCards = document.querySelectorAll('.eco-product-card');
+        
+        // Add filter functionality
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active class
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filterValue = this.getAttribute('data-filter');
+                
+                // Filter products
+                productCards.forEach(card => {
+                    if (filterValue === 'all') {
+                        card.style.display = 'block';
+                    } else if (filterValue === 'high-rating') {
+                        const rating = parseFloat(card.getAttribute('data-eco-rating'));
+                        card.style.display = rating >= 4 ? 'block' : 'none';
+                    } else if (filterValue === 'recyclable') {
+                        const recyclable = card.getAttribute('data-recyclable');
+                        card.style.display = recyclable === 'true' ? 'block' : 'none';
+                    } else if (filterValue === 'renewable') {
+                        const renewable = card.getAttribute('data-renewable');
+                        card.style.display = renewable === 'true' ? 'block' : 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .eco-friendly-container {
+        padding: 20px;
+    }
+    
+    .eco-banner {
+        display: flex;
+        align-items: center;
+        background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+        color: white;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .eco-banner-content {
+        flex: 1;
+    }
+    
+    .eco-banner-content h2 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.8rem;
+    }
+    
+    .eco-banner-content p {
+        margin: 0;
+        opacity: 0.9;
+    }
+    
+    .eco-banner-icon {
+        font-size: 3rem;
+        margin-left: 20px;
+    }
+    
+    .eco-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .filter-button {
+        padding: 8px 16px;
+        border: none;
+        background-color: #f0f0f0;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    .filter-button.active {
+        background-color: #4CAF50;
+        color: white;
+    }
+    
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+    }
+    
+    .eco-product-card {
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        background-color: white;
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .eco-product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+    
+    .eco-rating {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: rgba(255,255,255,0.9);
+        border-radius: 8px;
+        padding: 5px 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 1;
+    }
+    
+    .eco-rating-value {
+        font-weight: bold;
+        font-size: 0.8rem;
+        color: #4CAF50;
+    }
+    
+    .eco-rating-stars {
+        font-size: 0.7rem;
+        color: #4CAF50;
+    }
+    
+    .product-image {
+        height: 180px;
+        overflow: hidden;
+    }
+    
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .product-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f5f5f5;
+        color: #999;
+    }
+    
+    .product-placeholder i {
+        font-size: 3rem;
+    }
+    
+    .product-content {
+        padding: 15px;
+    }
+    
+    .product-content h3 {
+        margin-top: 0;
+        margin-bottom: 8px;
+        font-size: 1.2rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .product-platform {
+        color: #666;
+        font-size: 0.8rem;
+        margin: 0 0 8px 0;
+    }
+    
+    .product-price {
+        font-weight: bold;
+        color: #333;
+        margin: 0 0 15px 0;
+        font-size: 1.2rem;
+    }
+    
+    .eco-certifications {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-bottom: 10px;
+    }
+    
+    .eco-certification {
+        background-color: #E8F5E9;
+        color: #4CAF50;
+        font-size: 0.7rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+    
+    .eco-features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .eco-feature {
+        display: flex;
+        align-items: center;
+        font-size: 0.8rem;
+        color: #666;
+    }
+    
+    .eco-feature i {
+        margin-right: 5px;
+        color: #4CAF50;
+    }
+    
+    .product-action-button {
+        display: block;
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: 500;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+    
+    .product-action-button:hover {
+        background-color: #388E3C;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: #4CAF50;
+        opacity: 0.5;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Super Deal - {{ query }} - ShopAI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <a href="{{ url_for('index') }}" class="btn btn-outline-light mb-4">
+                <i class="fas fa-arrow-left me-2"></i> Back to Search
+            </a>
+            <h1 class="display-5 fw-bold mb-4">Super Deal Results</h1>
+            
+            <div class="alert alert-primary d-flex align-items-center" role="alert">
+                <i class="fas fa-bolt me-2"></i>
+                <div>
+                    We found the best deal for <strong>{{ query }}</strong> by comparing prices and reviews across multiple platforms.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-lg-8 offset-lg-2">
+            {% if deal %}
+                <div class="card super-deal-card mb-5">
+                    <div class="card-body p-0">
+                        <div class="super-deal-image-container mb-3">
+                            <div class="super-deal-platform-badge">{{ deal.platform }}</div>
+                            {% if deal.image_url %}
+                                <img src="{{ deal.image_url }}" class="img-fluid w-100 h-100 object-fit-cover" alt="{{ deal.name }}" 
+                                     onerror="this.onerror=null; this.classList.add('bg-placeholder'); this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100%25\' height=\'100%25\'%3E%3Crect width=\'100%25\' height=\'100%25\' fill=\'%231e1e1e\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-family=\'Arial\' font-size=\'20\' fill=\'%238a2be2\'%3E{{ deal.name[0] }}%3C/text%3E%3C/svg%3E';">
+                            {% else %}
+                                <div class="bg-placeholder" style="background: linear-gradient(45deg, #1e1e1e, #333333); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-shopping-bag fa-3x" style="color: var(--primary-color);"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="px-4 pb-4">
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="badge bg-warning text-dark">SUPER DEAL</span>
+                                <div class="super-deal-rating">
+                                    <i class="fas fa-star me-1"></i>
+                                    <span>{{ deal.rating }}</span>
+                                    <span class="super-deal-reviews ms-2">({{ deal.review_count|default(0) }} reviews)</span>
+                                </div>
+                            </div>
+                            
+                            <h3 class="fw-bold mb-3">{{ deal.name }}</h3>
+                            <p class="mb-4">{% if deal.description %}{{ deal.description }}{% else %}No detailed description available for this product.{% endif %}</p>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="price-section mb-2">
+                                        <h4 class="super-deal-price mb-0">${{ deal.price }}</h4>
+                                        {% if deal.original_price %}
+                                            <s class="original-price">${{ deal.original_price }}</s>
+                                            <span class="badge bg-danger discount-percentage">-{{ deal.discount_percent }}%</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    {% if deal.in_stock %}
+                                        <span class="badge bg-success availability-badge">In Stock</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary availability-badge">Out of Stock</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="d-flex flex-column">
+                                        <h6 class="mb-2">Deal Score</h6>
+                                        <div class="progress mb-2" style="height: 8px;">
+                                            <div class="progress-bar bg-warning" role="progressbar" style="width: {{ deal.deal_score }}%;" 
+                                                 aria-valuenow="{{ deal.deal_score }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <span class="deal-score">{{ deal.deal_score }}/100 - {{ 'Excellent' if deal.deal_score > 80 else 'Very Good' if deal.deal_score > 60 else 'Good' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {% if deal.key_features %}
+                                <div class="mb-4">
+                                    <h5 class="fw-bold mb-3">Key Features</h5>
+                                    <ul class="list-group list-group-flush">
+                                        {% for feature in deal.key_features %}
+                                            <li class="list-group-item bg-transparent text-light border-secondary">
+                                                <i class="fas fa-check-circle me-2 text-success"></i> {{ feature }}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="{{ url_for('all_deals_page', query=query) }}" class="btn btn-lg btn-outline-light me-md-2">
+                                    <i class="fas fa-list me-2"></i> View All Platform Deals
+                                </a>
+                                <a href="{{ deal.product_url }}" target="_blank" class="btn btn-lg super-deal-btn">
+                                    <i class="fas fa-bolt me-2"></i> Get This Deal
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mb-5">
+                    <p class="text-muted mb-4">This super deal was found by comparing prices and reviews from multiple platforms.</p>
+                    <a href="{{ url_for('index') }}" class="btn btn-accent">
+                        <i class="fas fa-search me-2"></i> Search for More Deals
+                    </a>
+                </div>
+            {% else %}
+                <div class="alert alert-warning" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    Sorry, we couldn't find any super deals for <strong>{{ query }}</strong>. Please try a different search.
+                </div>
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('index') }}" class="btn btn-accent">
+                        <i class="fas fa-search me-2"></i> Try Another Search
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

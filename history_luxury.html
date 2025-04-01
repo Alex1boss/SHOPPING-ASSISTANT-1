@@ -1,0 +1,421 @@
+{% extends 'base_luxury.html' %}
+
+{% block title %}Search History | LuxeSeeker{% endblock %}
+
+{% block extra_css %}
+<style>
+    .billion-history-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+    
+    .billion-history-title {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, var(--billion-white) 60%, var(--billion-cyan));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+    }
+    
+    .billion-history-subtitle {
+        font-size: 1.2rem;
+        color: var(--billion-platinum);
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .billion-clear-history-btn {
+        background: linear-gradient(135deg, var(--billion-red), var(--billion-burgundy));
+        color: white;
+        font-weight: 600;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        font-size: 1rem;
+        box-shadow: 0 8px 20px rgba(215, 38, 56, 0.2);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        border: none;
+    }
+    
+    .billion-clear-history-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(215, 38, 56, 0.3);
+    }
+    
+    .billion-no-history {
+        text-align: center;
+        padding: 4rem 0;
+    }
+    
+    .billion-no-history-icon {
+        font-size: 5rem;
+        color: var(--billion-blue);
+        margin-bottom: 2rem;
+        opacity: 0.5;
+    }
+    
+    .billion-history-card {
+        background: rgba(28, 28, 30, 0.5);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: var(--billion-border);
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        box-shadow: var(--billion-shadow);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .billion-history-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--billion-shadow-lg), 0 0 20px rgba(0, 255, 255, 0.1);
+        border-color: rgba(0, 255, 255, 0.1);
+    }
+    
+    .billion-history-card-header {
+        background: var(--billion-gradient-main);
+        padding: 1.5rem;
+        border-bottom: var(--billion-border);
+    }
+    
+    .billion-history-query {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--billion-white);
+    }
+    
+    .billion-history-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .billion-history-date {
+        color: var(--billion-platinum);
+        font-size: 0.9rem;
+    }
+    
+    .billion-history-type {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 0.3rem 1rem;
+        border-radius: 50px;
+    }
+    
+    .billion-history-type.general {
+        background: rgba(0, 255, 255, 0.1);
+        color: var(--billion-cyan);
+        border: 1px solid rgba(0, 255, 255, 0.2);
+    }
+    
+    .billion-history-type.super_deal {
+        background: rgba(255, 215, 0, 0.1);
+        color: var(--billion-gold);
+        border: 1px solid rgba(255, 215, 0, 0.2);
+    }
+    
+    .billion-history-type.all_deals {
+        background: rgba(15, 157, 88, 0.1);
+        color: var(--billion-green);
+        border: 1px solid rgba(15, 157, 88, 0.2);
+    }
+    
+    .billion-history-products {
+        padding: 1.5rem;
+    }
+    
+    .billion-product-row {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        transition: all 0.3s ease;
+        border-radius: 12px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .billion-product-row:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .billion-product-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-right: 1.5rem;
+        flex-shrink: 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background-color: rgba(0, 0, 0, 0.3);
+    }
+    
+    .billion-product-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+    
+    .billion-product-info {
+        flex-grow: 1;
+    }
+    
+    .billion-product-name {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--billion-white);
+    }
+    
+    .billion-product-price {
+        font-weight: 700;
+        color: var(--billion-cyan);
+        font-size: 1.1rem;
+    }
+    
+    .billion-product-platform {
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.2rem 0.8rem;
+        border-radius: 50px;
+        background: rgba(0, 0, 0, 0.4);
+        display: inline-block;
+        margin-left: 0.5rem;
+    }
+    
+    .billion-product-action {
+        flex-shrink: 0;
+        margin-left: 1.5rem;
+    }
+    
+    .billion-product-btn {
+        background: linear-gradient(135deg, var(--billion-cyan), var(--billion-electric));
+        color: var(--billion-black);
+        font-weight: 600;
+        padding: 0.5rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        border: none;
+    }
+    
+    .billion-product-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 255, 255, 0.2);
+    }
+    
+    .billion-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
+    }
+
+    .billion-loading-spinner {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 4px solid rgba(0, 255, 255, 0.1);
+        border-top: 4px solid var(--billion-cyan);
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    /* Platform badge colors */
+    .amazon-badge { color: var(--amazon-color); }
+    .walmart-badge { color: var(--walmart-color); }
+    .bestbuy-badge { color: var(--bestbuy-color); }
+    .target-badge { color: var(--target-color); }
+    .ebay-badge { color: var(--ebay-color); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="billion-history-header">
+        <h1 class="billion-history-title">Search History</h1>
+        <p class="billion-history-subtitle">Review your past searches and rediscover products that caught your interest.</p>
+    </div>
+    
+    <!-- Clear History Button -->
+    <div class="text-center mb-5">
+        <button id="clearHistoryBtn" class="billion-clear-history-btn">
+            <i class="fas fa-trash-alt me-2"></i> Clear History
+        </button>
+    </div>
+    
+    <!-- History List -->
+    <div id="historyContainer">
+        {% if queries %}
+            {% for query in queries %}
+                <div class="billion-history-card">
+                    <div class="billion-history-card-header">
+                        <h3 class="billion-history-query">{{ query.query_text }}</h3>
+                        <div class="billion-history-meta">
+                            <div class="billion-history-date">
+                                <i class="far fa-clock me-1"></i> {{ query.formatted_date() }}
+                            </div>
+                            <div class="billion-history-type {{ query.search_type }}">
+                                {% if query.search_type == 'general' %}
+                                    <i class="fas fa-search me-1"></i> General Search
+                                {% elif query.search_type == 'super_deal' %}
+                                    <i class="fas fa-bolt me-1"></i> Super Deal
+                                {% elif query.search_type == 'all_deals' %}
+                                    <i class="fas fa-tags me-1"></i> All Deals
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="billion-history-products">
+                        {% if query.recommendations %}
+                            {% for product in query.recommendations[:3] %}
+                                <div class="billion-product-row">
+                                    <div class="billion-product-img">
+                                        <img src="{{ product.image_url or 'https://via.placeholder.com/80?text=No+Image' }}" alt="{{ product.name }}">
+                                    </div>
+                                    <div class="billion-product-info">
+                                        <h4 class="billion-product-name">{{ product.name }}</h4>
+                                        <div>
+                                            <span class="billion-product-price">
+                                                {% if product.price %}
+                                                    ${{ format_price(product.price) }}
+                                                {% elif product.price_range %}
+                                                    {{ product.price_range }}
+                                                {% else %}
+                                                    Price unavailable
+                                                {% endif %}
+                                            </span>
+                                            {% if product.platform %}
+                                                <span class="billion-product-platform {{ product.platform.lower() }}-badge">
+                                                    {{ product.platform }}
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="billion-product-action">
+                                        <a href="{{ product.product_url }}" target="_blank" class="billion-product-btn">
+                                            <i class="fas fa-external-link-alt me-2"></i> View
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            
+                            {% if query.recommendations|length > 3 %}
+                                <div class="text-center mt-3">
+                                    <a href="#" class="btn billion-product-btn">
+                                        <i class="fas fa-eye me-2"></i> View All ({{ query.recommendations|length }})
+                                    </a>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-center py-4">
+                                <p class="text-muted">No product recommendations available</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="billion-no-history">
+                <div class="billion-no-history-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h3 class="mb-3">No Search History Yet</h3>
+                <p class="text-muted mb-4">Start searching for products to build your history.</p>
+                <a href="{{ url_for('luxury_index') }}" class="btn billion-product-btn">
+                    <i class="fas fa-search me-2"></i> Start Searching
+                </a>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Loading indicator -->
+    <div id="loadingIndicator" class="billion-loading d-none">
+        <div class="billion-loading-spinner"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+        const historyContainer = document.getElementById('historyContainer');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        
+        if (clearHistoryBtn) {
+            clearHistoryBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear all your search history? This action cannot be undone.')) {
+                    clearHistory();
+                }
+            });
+        }
+        
+        function clearHistory() {
+            // Show loading
+            historyContainer.classList.add('d-none');
+            loadingIndicator.classList.remove('d-none');
+            
+            fetch('/api/history/clear', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading
+                loadingIndicator.classList.add('d-none');
+                
+                if (data.success) {
+                    // Show empty state
+                    historyContainer.innerHTML = `
+                        <div class="billion-no-history">
+                            <div class="billion-no-history-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <h3 class="mb-3">No Search History Yet</h3>
+                            <p class="text-muted mb-4">Start searching for products to build your history.</p>
+                            <a href="{{ url_for('luxury_index') }}" class="btn billion-product-btn">
+                                <i class="fas fa-search me-2"></i> Start Searching
+                            </a>
+                        </div>
+                    `;
+                    historyContainer.classList.remove('d-none');
+                } else {
+                    alert('Failed to clear history. Please try again.');
+                    historyContainer.classList.remove('d-none');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                loadingIndicator.classList.add('d-none');
+                historyContainer.classList.remove('d-none');
+                alert('An error occurred while clearing history. Please try again.');
+            });
+        }
+        
+        // Animation for cards
+        const historyCards = document.querySelectorAll('.billion-history-card');
+        historyCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100 * index);
+        });
+    });
+</script>
+{% endblock %}

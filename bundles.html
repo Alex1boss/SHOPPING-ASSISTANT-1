@@ -1,0 +1,332 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}AI Smart Bundles - ShopAI{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <header class="app-header">
+        <div class="back-button" onclick="history.back()">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <h1 class="page-title">AI Smart Bundles</h1>
+    </header>
+
+    <div class="bundles-container">
+        {% if featured_bundles %}
+            <section class="featured-bundles">
+                <h2 class="section-title">Featured Bundles</h2>
+                <div class="bundles-grid featured">
+                    {% for bundle in featured_bundles %}
+                        <div class="bundle-card featured" style="background-color: {{ bundle.accent_color or '#f8f8f8' }}">
+                            {% if bundle.image_url %}
+                                <div class="bundle-image">
+                                    <img src="{{ bundle.image_url }}" alt="{{ bundle.name }}">
+                                    <div class="bundle-badge">FEATURED</div>
+                                </div>
+                            {% else %}
+                                <div class="bundle-image bundle-placeholder">
+                                    <i class="fas fa-box-open"></i>
+                                    <div class="bundle-badge">FEATURED</div>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="bundle-content">
+                                <h3>{{ bundle.name }}</h3>
+                                <p>{{ bundle.description }}</p>
+                                
+                                <div class="bundle-pricing">
+                                    <div class="price-info">
+                                        <span class="current-price">{{ format_price(bundle.discount_price) }}</span>
+                                        {% if bundle.total_price and bundle.total_price > bundle.discount_price %}
+                                            <span class="original-price">{{ format_price(bundle.total_price) }}</span>
+                                            <span class="discount-percent">-{{ bundle.discount_percent }}%</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="bundle-products">
+                                    <h4>Includes:</h4>
+                                    <ul>
+                                        {% for product in bundle.products %}
+                                            <li>
+                                                <span class="product-name">{{ product.name }}</span>
+                                                <span class="product-price">{{ format_price(product.price) }}</span>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                
+                                <a href="#" class="bundle-action-button">
+                                    Buy Bundle
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+        
+        {% if other_bundles %}
+            <section class="all-bundles">
+                <h2 class="section-title">All Bundles</h2>
+                <div class="bundles-grid">
+                    {% for bundle in other_bundles %}
+                        <div class="bundle-card" style="background-color: {{ bundle.accent_color or '#f8f8f8' }}">
+                            {% if bundle.image_url %}
+                                <div class="bundle-image">
+                                    <img src="{{ bundle.image_url }}" alt="{{ bundle.name }}">
+                                </div>
+                            {% else %}
+                                <div class="bundle-image bundle-placeholder">
+                                    <i class="fas fa-box-open"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="bundle-content">
+                                <h3>{{ bundle.name }}</h3>
+                                <p>{{ bundle.description }}</p>
+                                
+                                <div class="bundle-pricing">
+                                    <div class="price-info">
+                                        <span class="current-price">{{ format_price(bundle.discount_price) }}</span>
+                                        {% if bundle.total_price and bundle.total_price > bundle.discount_price %}
+                                            <span class="original-price">{{ format_price(bundle.total_price) }}</span>
+                                            <span class="discount-percent">-{{ bundle.discount_percent }}%</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="bundle-products">
+                                    <h4>Includes:</h4>
+                                    <ul>
+                                        {% for product in bundle.products %}
+                                            <li>
+                                                <span class="product-name">{{ product.name }}</span>
+                                                <span class="product-price">{{ format_price(product.price) }}</span>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                
+                                <a href="#" class="bundle-action-button">
+                                    Buy Bundle
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+        
+        {% if not featured_bundles and not other_bundles %}
+            <div class="empty-state">
+                <i class="fas fa-box-open"></i>
+                <p>No product bundles available at the moment. Check back soon for AI-curated bundles and amazing deals!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .bundles-container {
+        padding: 20px;
+    }
+    
+    .section-title {
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+        color: #333;
+    }
+    
+    .featured-bundles {
+        margin-bottom: 30px;
+    }
+    
+    .bundles-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    
+    .bundles-grid.featured {
+        grid-template-columns: 1fr;
+    }
+    
+    @media (min-width: 768px) {
+        .bundles-grid.featured {
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        }
+    }
+    
+    .bundle-card {
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .bundle-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+    
+    .bundle-card.featured {
+        border: 2px solid var(--primary-color);
+    }
+    
+    .bundle-image {
+        height: 180px;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .bundle-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .bundle-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: bold;
+    }
+    
+    .bundle-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        color: white;
+    }
+    
+    .bundle-placeholder i {
+        font-size: 3rem;
+    }
+    
+    .bundle-content {
+        padding: 20px;
+    }
+    
+    .bundle-content h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.5rem;
+    }
+    
+    .bundle-content p {
+        margin-bottom: 15px;
+        color: #555;
+    }
+    
+    .bundle-pricing {
+        margin-bottom: 15px;
+    }
+    
+    .price-info {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    
+    .current-price {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        margin-right: 10px;
+    }
+    
+    .original-price {
+        text-decoration: line-through;
+        color: #999;
+        margin-right: 10px;
+    }
+    
+    .discount-percent {
+        background-color: #ff6b6b;
+        color: white;
+        padding: 3px 6px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: bold;
+    }
+    
+    .bundle-products {
+        margin-bottom: 15px;
+        padding: 15px;
+        background-color: rgba(0,0,0,0.05);
+        border-radius: 8px;
+    }
+    
+    .bundle-products h4 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1rem;
+        color: #555;
+    }
+    
+    .bundle-products ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .bundle-products li {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .bundle-products li:last-child {
+        border-bottom: none;
+    }
+    
+    .product-name {
+        flex: 1;
+    }
+    
+    .product-price {
+        font-weight: bold;
+        color: #555;
+    }
+    
+    .bundle-action-button {
+        display: block;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 24px;
+        text-decoration: none;
+        font-weight: 500;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+    
+    .bundle-action-button:hover {
+        background-color: var(--primary-dark);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: #ccc;
+    }
+</style>
+{% endblock %}

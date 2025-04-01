@@ -1,0 +1,444 @@
+{% extends 'base.html' %}
+
+{% block title %}ShopAI | Smart Shopping Assistant{% endblock %}
+
+{% block content %}
+<!-- Main Banner Carousel -->
+<div class="container-fluid px-0 mb-3">
+    <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="d-flex align-items-center justify-content-between banner-slide" style="background: linear-gradient(to right, #8a2387, #e94057, #f27121); height: 200px;">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-md-6 text-white">
+                                <h2 class="fw-bold mb-2">realme P1 5G</h2>
+                                <h4 class="mb-3">From ₹12,499*</h4>
+                                <p class="mb-3">Best selling AMOLED all rounder</p>
+                                <a href="#" class="btn btn-light btn-sm">Shop Now</a>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_NpXY-NzPQ8dUVV1m-GIqZ-5Ug7FiL0PTDg&usqp=CAU" alt="realme P1 5G" class="img-fluid" style="max-height: 180px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="d-flex align-items-center justify-content-between banner-slide" style="background: linear-gradient(to right, #0f0c29, #302b63, #24243e); height: 200px;">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-md-6 text-white">
+                                <h2 class="fw-bold mb-2">Premium Laptops</h2>
+                                <h4 class="mb-3">From ₹49,990*</h4>
+                                <p class="mb-3">Intel® All PCs with incredible performance</p>
+                                <a href="#" class="btn btn-light btn-sm">Shop Now</a>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6eztRYXbvyLkJ5sQ9zX3H6-j_GQEDwE7o1A&usqp=CAU" alt="Premium Laptops" class="img-fluid" style="max-height: 180px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="d-flex align-items-center justify-content-between banner-slide" style="background: linear-gradient(to right, #0083B0, #00B4DB); height: 200px;">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-md-6 text-white">
+                                <h2 class="fw-bold mb-2">Wireless Earbuds</h2>
+                                <h4 class="mb-3">From ₹799 only</h4>
+                                <p class="mb-3">Newly launched premium sound experience</p>
+                                <a href="#" class="btn btn-light btn-sm">Shop Now</a>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrxso6fA6p7BBMc0J7WK7MPlNiw5Hl8EyK6g&usqp=CAU" alt="Wireless Earbuds" class="img-fluid" style="max-height: 180px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+
+<!-- Category Icons Section -->
+<div class="container mb-4">
+    <div class="row category-icons-row text-center g-3">
+        <div class="col-4 col-md-2">
+            <a href="#" class="category-icon-link">
+                <div class="category-icon-container mb-2">
+                    <img src="https://rukminim2.flixcart.com/flap/128/128/image/22fddf3c7da4c4f4.png" alt="Mobiles" class="img-fluid">
+                </div>
+                <span class="category-label">Mobiles</span>
+            </a>
+        </div>
+        <div class="col-4 col-md-2">
+            <a href="#" class="category-icon-link">
+                <div class="category-icon-container mb-2">
+                    <img src="https://rukminim2.flixcart.com/flap/128/128/image/69c6589653afdb9a.png" alt="Electronics" class="img-fluid">
+                </div>
+                <span class="category-label">Electronics</span>
+            </a>
+        </div>
+        <div class="col-4 col-md-2">
+            <a href="#" class="category-icon-link">
+                <div class="category-icon-container mb-2">
+                    <img src="https://rukminim2.flixcart.com/flap/128/128/image/ab7e2b022a4587dd.jpg" alt="Home" class="img-fluid">
+                </div>
+                <span class="category-label">Home</span>
+            </a>
+        </div>
+        <div class="col-4 col-md-2">
+            <a href="#" class="category-icon-link">
+                <div class="category-icon-container mb-2">
+                    <img src="https://rukminim2.flixcart.com/fk-p-flap/128/128/image/0d75b34f7d8fbcb3.png" alt="Fashion" class="img-fluid">
+                </div>
+                <span class="category-label">Fashion</span>
+            </a>
+        </div>
+        <div class="col-4 col-md-2">
+            <a href="#" class="category-icon-link">
+                <div class="category-icon-container mb-2">
+                    <img src="https://rukminim2.flixcart.com/flap/128/128/image/dff3f7adcf3a90c6.png" alt="Beauty" class="img-fluid">
+                </div>
+                <span class="category-label">Beauty</span>
+            </a>
+        </div>
+        <div class="col-4 col-md-2">
+            <a href="#" class="category-icon-link">
+                <div class="category-icon-container mb-2">
+                    <img src="https://rukminim2.flixcart.com/fk-p-flap/128/128/image/05d708653beff580.png" alt="2 Wheelers" class="img-fluid">
+                </div>
+                <span class="category-label">2 Wheelers</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Search Section & Super Deal Buttons -->
+<div class="container mb-4" id="search-section">
+    <div class="card shadow-sm border-0">
+        <div class="card-body py-4">
+            <h4 class="mb-3 text-center">Find Your Perfect Product</h4>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <form id="search-form" class="mb-3" autocomplete="off">
+                        <div class="input-group mb-3">
+                            <input 
+                                type="text" 
+                                id="search-query" 
+                                class="form-control search-input shadow-sm" 
+                                placeholder="What are you looking for? (e.g., budget smartphone, gaming laptop)" 
+                                aria-label="Search query"
+                                required
+                            >
+                            <button class="btn btn-primary search-btn" type="submit" id="search-button">
+                                <i class="fas fa-search me-2"></i> Search
+                            </button>
+                        </div>
+                        <div class="d-flex flex-wrap justify-content-center mt-3 gap-2">
+                            <button id="super-deal-btn" class="btn btn-warning" type="button">
+                                <i class="fas fa-bolt me-1"></i> Find Super Deal
+                            </button>
+                            <button id="all-deals-btn" class="btn btn-outline-primary" type="button">
+                                <i class="fas fa-list me-1"></i> All Platform Deals
+                            </button>
+                            <button id="trending-deals-btn" class="btn btn-danger" type="button">
+                                <i class="fas fa-fire me-1"></i> Trending Deals
+                            </button>
+                        </div>
+                        <p class="text-center text-muted small mt-2">Compare prices across multiple platforms</p>
+                    </form>
+                </div>
+            </div>
+            <!-- Error alert -->
+            <div id="error-container" class="alert alert-danger d-none mx-auto" style="max-width: 600px;" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <span id="error-message"></span>
+            </div>
+            <!-- Loading indicator -->
+            <div id="loading-indicator" class="d-none text-center my-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Searching for the best deals...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Products Section -->
+<div class="container mb-4">
+    <div class="section-header mb-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-fire text-danger me-2"></i>Trending Deals</h5>
+        <a href="#" class="text-primary small text-decoration-none">VIEW ALL</a>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 col-md-4">
+            <div class="card product-card h-100 border-0 shadow-sm">
+                <div class="product-image-container">
+                    <img src="https://rukminim2.flixcart.com/image/312/312/xif0q/mobile/m/o/b/-original-imaghx9qkupcsgec.jpeg" class="card-img-top" alt="Product Image">
+                    <div class="product-platform-badge amazon-badge">
+                        <i class="fab fa-amazon me-1"></i> Amazon
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title product-title">SAMSUNG Galaxy F15 5G (Ash Black, 128 GB)</h5>
+                    <div class="rating mb-2">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span class="ms-1">4.5</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="price-container">
+                            <span class="current-price">₹11,999</span>
+                            <span class="original-price">₹14,999</span>
+                        </div>
+                        <span class="discount-badge">20% off</span>
+                    </div>
+                    <p class="card-text small text-muted">MediaTek Dimensity 6100+ Processor | 6000 mAh Battery</p>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <div class="d-grid">
+                        <button class="btn btn-sm btn-outline-primary view-deal-btn">View Deal</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="card product-card h-100 border-0 shadow-sm">
+                <div class="product-image-container">
+                    <img src="https://rukminim2.flixcart.com/image/312/312/xif0q/headphone/t/j/u/-original-imagq3afh3zbzwzk.jpeg" class="card-img-top" alt="Product Image">
+                    <div class="product-platform-badge walmart-badge">
+                        <i class="fas fa-store me-1"></i> Walmart
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title product-title">boAt Airdopes 161 with 40 Hours Playback</h5>
+                    <div class="rating mb-2">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <span class="ms-1">4.0</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="price-container">
+                            <span class="current-price">₹1,099</span>
+                            <span class="original-price">₹2,490</span>
+                        </div>
+                        <span class="discount-badge">55% off</span>
+                    </div>
+                    <p class="card-text small text-muted">ASAP Charge | Beast Mode | IPX5 Water Resistance</p>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <div class="d-grid">
+                        <button class="btn btn-sm btn-outline-primary view-deal-btn">View Deal</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="card product-card h-100 border-0 shadow-sm">
+                <div class="product-image-container">
+                    <img src="https://rukminim2.flixcart.com/image/312/312/xif0q/computer/b/e/i/-original-imagpy2pgjgzxvuh.jpeg" class="card-img-top" alt="Product Image">
+                    <div class="product-platform-badge bestbuy-badge">
+                        <i class="fas fa-tag me-1"></i> Best Buy
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title product-title">HP Laptop 15s, 12th Gen Intel Core i3-1215U</h5>
+                    <div class="rating mb-2">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <span class="ms-1">4.9</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="price-container">
+                            <span class="current-price">₹37,990</span>
+                            <span class="original-price">₹49,728</span>
+                        </div>
+                        <span class="discount-badge">23% off</span>
+                    </div>
+                    <p class="card-text small text-muted">8GB RAM | 512GB SSD | 15.6-inch FHD | Windows 11</p>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <div class="d-grid">
+                        <button class="btn btn-sm btn-outline-primary view-deal-btn">View Deal</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Platform Deals Section -->
+<div class="container mb-5">
+    <div class="section-header mb-3">
+        <h5 class="mb-0"><i class="fas fa-tags text-success me-2"></i>Shop by Platform</h5>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="card platform-card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fab fa-amazon platform-icon amazon-icon"></i>
+                    <h6 class="card-title mt-2">Amazon</h6>
+                    <p class="small text-muted mb-0">Prime Day Deals</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="card platform-card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-store platform-icon walmart-icon"></i>
+                    <h6 class="card-title mt-2">Walmart</h6>
+                    <p class="small text-muted mb-0">Rollback Prices</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="card platform-card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-tag platform-icon bestbuy-icon"></i>
+                    <h6 class="card-title mt-2">Best Buy</h6>
+                    <p class="small text-muted mb-0">Deal of the Day</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="card platform-card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-bullseye platform-icon target-icon"></i>
+                    <h6 class="card-title mt-2">Target</h6>
+                    <p class="small text-muted mb-0">Circle Offers</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="card platform-card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fab fa-ebay platform-icon ebay-icon"></i>
+                    <h6 class="card-title mt-2">eBay</h6>
+                    <p class="small text-muted mb-0">Daily Discounts</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.getElementById('search-form');
+    const searchButton = document.getElementById('search-button');
+    const searchQuery = document.getElementById('search-query');
+    const superDealBtn = document.getElementById('super-deal-btn');
+    const allDealsBtn = document.getElementById('all-deals-btn');
+    const trendingDealsBtn = document.getElementById('trending-deals-btn');
+    const errorContainer = document.getElementById('error-container');
+    const errorMessage = document.getElementById('error-message');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    
+    // Search form submission
+    searchForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const query = searchQuery.value.trim();
+        
+        if (!query) {
+            showError('Please enter a search query');
+            return;
+        }
+        
+        showLoading();
+        
+        // Redirect to all deals page
+        window.location.href = `/all-deals?query=${encodeURIComponent(query)}`;
+    });
+    
+    // Super Deal button click
+    superDealBtn.addEventListener('click', function() {
+        const query = searchQuery.value.trim();
+        
+        if (!query) {
+            showError('Please enter a search query first');
+            return;
+        }
+        
+        showLoading();
+        
+        // Redirect to super deal page
+        window.location.href = `/super-deal?query=${encodeURIComponent(query)}`;
+    });
+    
+    // All Deals button click
+    allDealsBtn.addEventListener('click', function() {
+        const query = searchQuery.value.trim();
+        
+        if (!query) {
+            showError('Please enter a search query first');
+            return;
+        }
+        
+        showLoading();
+        
+        // Redirect to all deals page
+        window.location.href = `/all-deals?query=${encodeURIComponent(query)}`;
+    });
+    
+    // Trending Deals button click
+    trendingDealsBtn.addEventListener('click', function() {
+        // You can either redirect to trending page or scroll to trending section
+        const trendingSection = document.querySelector('.section-header:has(i.fas.fa-fire)');
+        if (trendingSection) {
+            trendingSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+    
+    // Helper functions
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorContainer.classList.remove('d-none');
+        setTimeout(() => {
+            errorContainer.classList.add('d-none');
+        }, 5000);
+    }
+    
+    function showLoading() {
+        loadingIndicator.classList.remove('d-none');
+        searchButton.disabled = true;
+        superDealBtn.disabled = true;
+        allDealsBtn.disabled = true;
+    }
+    
+    function hideLoading() {
+        loadingIndicator.classList.add('d-none');
+        searchButton.disabled = false;
+        superDealBtn.disabled = false;
+        allDealsBtn.disabled = false;
+    }
+});
+</script>
+{% endblock %}

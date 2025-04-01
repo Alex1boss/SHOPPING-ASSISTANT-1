@@ -1,0 +1,158 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}Shop by Need - ShopAI{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <header class="app-header">
+        <div class="back-button" onclick="history.back()">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <h1 class="page-title">Shop by Need</h1>
+    </header>
+
+    <div class="needs-grid">
+        {% if needs %}
+            {% for need in needs %}
+                <div class="need-card" style="background-color: {{ need.bg_color or '#f0f0f0' }}">
+                    <div class="need-icon">
+                        <i class="{{ need.icon_class or 'fas fa-shopping-basket' }}"></i>
+                    </div>
+                    <div class="need-content">
+                        <h3>{{ need.name }}</h3>
+                        <p>{{ need.description }}</p>
+                        
+                        {% if need.examples %}
+                            <div class="need-examples">
+                                <h4>Examples:</h4>
+                                <ul>
+                                    {% for example in need.examples %}
+                                        <li>
+                                            <a href="{{ url_for('search_api', query=example, search_type='general') }}">
+                                                {{ example }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        
+                        <a href="{{ url_for('search_api', query=need.query_pattern, search_type='general') }}" class="need-action-button">
+                            Find Products
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-info-circle"></i>
+                <p>No shop by need categories available yet. Check back later!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .needs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    .need-card {
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .need-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+    
+    .need-icon {
+        font-size: 2rem;
+        margin-bottom: 15px;
+        color: var(--primary-color);
+    }
+    
+    .need-content h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.5rem;
+    }
+    
+    .need-content p {
+        margin-bottom: 15px;
+        color: #555;
+    }
+    
+    .need-examples {
+        margin: 15px 0;
+        padding: 10px;
+        background-color: rgba(255,255,255,0.7);
+        border-radius: 8px;
+    }
+    
+    .need-examples h4 {
+        margin-top: 0;
+        margin-bottom: 8px;
+        font-size: 1rem;
+    }
+    
+    .need-examples ul {
+        padding-left: 20px;
+        margin: 0;
+    }
+    
+    .need-examples li {
+        margin-bottom: 5px;
+    }
+    
+    .need-examples a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+    
+    .need-examples a:hover {
+        text-decoration: underline;
+    }
+    
+    .need-action-button {
+        display: inline-block;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 20px;
+        text-decoration: none;
+        margin-top: 10px;
+        font-weight: 500;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+    
+    .need-action-button:hover {
+        background-color: var(--primary-dark);
+    }
+    
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px;
+        color: #666;
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: #ccc;
+    }
+</style>
+{% endblock %}

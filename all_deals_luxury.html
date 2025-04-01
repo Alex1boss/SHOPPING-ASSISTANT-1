@@ -1,0 +1,951 @@
+{% extends 'base_luxury.html' %}
+
+{% block title %}All Platform Deals | LuxeSeeker{% endblock %}
+
+{% block extra_css %}
+<style>
+    .billion-all-deals-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+    
+    .billion-all-deals-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, var(--billion-blue) 30%, var(--billion-electric));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .billion-all-deals-subtitle {
+        font-size: 1.2rem;
+        color: var(--billion-platinum);
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .billion-platform-filter {
+        margin-bottom: 3rem;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .billion-platform-btn {
+        background: var(--billion-gradient-dark);
+        border: var(--billion-border);
+        border-radius: 50px;
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--billion-platinum);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .billion-platform-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .billion-platform-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--billion-shadow);
+        color: var(--billion-white);
+        border-color: rgba(0, 255, 255, 0.1);
+    }
+    
+    .billion-platform-btn:hover::before {
+        opacity: 1;
+    }
+    
+    .billion-platform-btn.active {
+        background: linear-gradient(135deg, var(--billion-blue-dark), var(--billion-blue));
+        color: var(--billion-white);
+        box-shadow: 0 8px 20px rgba(0, 119, 255, 0.3);
+        border-color: rgba(0, 119, 255, 0.3);
+    }
+    
+    .billion-platform-btn i {
+        margin-right: 0.5rem;
+    }
+    
+    .billion-filter-section {
+        background: var(--billion-gradient-dark);
+        border: var(--billion-border);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .billion-filter-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--billion-white);
+        display: flex;
+        align-items: center;
+    }
+    
+    .billion-filter-title i {
+        margin-right: 0.8rem;
+        color: var(--billion-blue);
+    }
+    
+    .billion-sort-select {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--billion-white);
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        width: 100%;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255, 255, 255, 0.5)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1rem;
+    }
+    
+    .billion-sort-select:focus {
+        outline: none;
+        border-color: var(--billion-blue);
+    }
+    
+    .billion-price-filter {
+        margin-bottom: 1.5rem;
+    }
+    
+    .billion-price-inputs {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .billion-price-input {
+        flex: 1;
+    }
+    
+    .billion-price-input input {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--billion-white);
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        width: 100%;
+    }
+    
+    .billion-price-input input:focus {
+        outline: none;
+        border-color: var(--billion-blue);
+    }
+    
+    .billion-price-input label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--billion-platinum);
+    }
+    
+    .billion-rating-filter {
+        margin-bottom: 1.5rem;
+    }
+    
+    .billion-rating-slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.1);
+        outline: none;
+        margin: 1rem 0;
+    }
+    
+    .billion-rating-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--billion-blue);
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(0, 119, 255, 0.5);
+    }
+    
+    .billion-rating-value {
+        color: var(--billion-white);
+        font-weight: 600;
+        text-align: center;
+    }
+    
+    .billion-stock-filter {
+        margin-bottom: 1.5rem;
+    }
+    
+    .billion-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+    }
+    
+    .billion-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .billion-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.1);
+        transition: .4s;
+        border-radius: 24px;
+    }
+    
+    .billion-slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: var(--billion-platinum);
+        transition: .4s;
+        border-radius: 50%;
+    }
+    
+    input:checked + .billion-slider {
+        background-color: var(--billion-blue);
+    }
+    
+    input:checked + .billion-slider:before {
+        transform: translateX(26px);
+        background-color: white;
+    }
+    
+    .billion-filter-label {
+        color: var(--billion-platinum);
+        margin-left: 1rem;
+    }
+    
+    .billion-filter-group {
+        display: flex;
+        align-items: center;
+    }
+    
+    .billion-filter-btn {
+        background: linear-gradient(135deg, var(--billion-blue-dark), var(--billion-blue));
+        color: white;
+        font-weight: 600;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        box-shadow: 0 8px 20px rgba(0, 119, 255, 0.2);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        border: none;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .billion-filter-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(0, 119, 255, 0.3);
+    }
+    
+    .billion-reset-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--billion-platinum);
+        font-weight: 500;
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .billion-reset-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--billion-white);
+    }
+    
+    .billion-deals-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+    
+    .billion-deal-card {
+        background: var(--billion-gradient-dark);
+        border: var(--billion-border);
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+    }
+    
+    .billion-deal-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--billion-shadow-lg);
+        border-color: rgba(0, 255, 255, 0.1);
+    }
+    
+    .billion-deal-image {
+        height: 200px;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        border-bottom: var(--billion-border);
+    }
+    
+    .billion-deal-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .billion-deal-card:hover .billion-deal-image img {
+        transform: scale(1.05);
+    }
+    
+    .billion-deal-platform-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        z-index: 1;
+    }
+    
+    .billion-platform-amazon { color: var(--amazon-color); border: 1px solid rgba(255, 153, 0, 0.2); }
+    .billion-platform-walmart { color: var(--walmart-color); border: 1px solid rgba(0, 113, 220, 0.2); }
+    .billion-platform-bestbuy { color: var(--bestbuy-color); border: 1px solid rgba(0, 70, 190, 0.2); }
+    .billion-platform-target { color: var(--target-color); border: 1px solid rgba(204, 0, 0, 0.2); }
+    .billion-platform-ebay { color: var(--ebay-color); border: 1px solid rgba(229, 50, 56, 0.2); }
+    
+    .billion-deal-discount {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        background: linear-gradient(135deg, var(--billion-green), rgba(15, 157, 88, 0.8));
+        color: white;
+        font-weight: 700;
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        z-index: 1;
+    }
+    
+    .billion-deal-content {
+        padding: 1.5rem;
+    }
+    
+    .billion-deal-name {
+        font-size: 1.2rem;
+        font-weight: 700;
+        line-height: 1.4;
+        margin-bottom: 0.8rem;
+        color: var(--billion-white);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 2.8em;
+    }
+    
+    .billion-deal-price {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .billion-deal-current {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--billion-cyan);
+        margin-right: 1rem;
+    }
+    
+    .billion-deal-original {
+        font-size: 1rem;
+        text-decoration: line-through;
+        color: var(--billion-platinum);
+        opacity: 0.7;
+    }
+    
+    .billion-deal-rating {
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .billion-deal-stars {
+        color: var(--billion-gold);
+        margin-right: 0.5rem;
+    }
+    
+    .billion-deal-reviews {
+        font-size: 0.9rem;
+        color: var(--billion-platinum);
+    }
+    
+    .billion-deal-info {
+        margin-bottom: 1rem;
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .billion-deal-info-item {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 0.4rem 0.8rem;
+        border-radius: 5px;
+        font-size: 0.8rem;
+        color: var(--billion-platinum);
+        display: flex;
+        align-items: center;
+    }
+    
+    .billion-deal-info-item i {
+        margin-right: 0.4rem;
+        font-size: 0.7rem;
+    }
+    
+    .billion-deal-action {
+        display: flex;
+        gap: 0.8rem;
+    }
+    
+    .billion-view-btn {
+        flex-grow: 1;
+        background: linear-gradient(135deg, var(--billion-cyan), var(--billion-blue));
+        color: black;
+        font-weight: 600;
+        padding: 0.8rem 0;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        text-align: center;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        text-decoration: none;
+    }
+    
+    .billion-view-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 16px rgba(0, 255, 255, 0.2);
+        color: black;
+    }
+    
+    .billion-save-btn {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--billion-platinum);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .billion-save-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--billion-white);
+    }
+    
+    .billion-deal-score {
+        margin-top: 1rem;
+    }
+    
+    .billion-score-bar {
+        height: 6px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+        overflow: hidden;
+        margin-top: 0.5rem;
+    }
+    
+    .billion-score-progress {
+        height: 100%;
+        background: linear-gradient(90deg, var(--billion-cyan), var(--billion-blue));
+    }
+    
+    .billion-score-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+    }
+    
+    .billion-score-value {
+        color: var(--billion-cyan);
+        font-weight: 600;
+    }
+    
+    .billion-score-text {
+        color: var(--billion-platinum);
+    }
+    
+    .billion-no-deals {
+        text-align: center;
+        padding: 5rem 0;
+    }
+    
+    .billion-no-deals-icon {
+        font-size: 5rem;
+        color: var(--billion-platinum);
+        margin-bottom: 2rem;
+        opacity: 0.5;
+    }
+    
+    .billion-loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 300px;
+    }
+    
+    .billion-loading-spinner {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 4px solid rgba(0, 119, 255, 0.1);
+        border-top: 4px solid var(--billion-blue);
+        animation: spin 1s linear infinite;
+        margin-bottom: 1.5rem;
+    }
+    
+    .billion-loading-text {
+        color: var(--billion-platinum);
+        font-size: 1.1rem;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="billion-all-deals-header">
+        <h1 class="billion-all-deals-title">Elite Platform Comparison</h1>
+        <p class="billion-all-deals-subtitle">We've analyzed premium deals for "{{ query }}" across multiple luxury retail platforms</p>
+    </div>
+    
+    <!-- Platform Filter -->
+    <div class="billion-platform-filter">
+        <button class="billion-platform-btn active" data-platform="all">
+            <i class="fas fa-globe"></i> All Platforms
+        </button>
+        
+        {% for platform in platforms %}
+            <button class="billion-platform-btn" data-platform="{{ platform.lower() }}">
+                <i class="fas {% if platform.lower() == 'amazon' %}fa-amazon{% elif platform.lower() == 'walmart' %}fa-shopping-cart{% elif platform.lower() == 'bestbuy' %}fa-tag{% elif platform.lower() == 'target' %}fa-bullseye{% elif platform.lower() == 'ebay' %}fa-shopping-bag{% else %}fa-store{% endif %}"></i>
+                {{ platform }}
+            </button>
+        {% endfor %}
+    </div>
+    
+    <div class="row">
+        <!-- Filter Section -->
+        <div class="col-lg-3 mb-4">
+            <div class="billion-filter-section">
+                <h3 class="billion-filter-title">
+                    <i class="fas fa-sort"></i> Sort Options
+                </h3>
+                <select id="sortSelect" class="billion-sort-select mb-4">
+                    <option value="deal_score_desc">Best Deal (Highest Score)</option>
+                    <option value="price_asc">Price (Low to High)</option>
+                    <option value="price_desc">Price (High to Low)</option>
+                    <option value="discount_desc">Discount (Highest)</option>
+                    <option value="rating_desc">Rating (Highest)</option>
+                </select>
+                
+                <h3 class="billion-filter-title">
+                    <i class="fas fa-filter"></i> Filters
+                </h3>
+                
+                <div class="billion-price-filter">
+                    <div class="billion-price-inputs">
+                        <div class="billion-price-input">
+                            <label>Min Price ($)</label>
+                            <input type="number" id="minPriceInput" min="0" placeholder="0">
+                        </div>
+                        <div class="billion-price-input">
+                            <label>Max Price ($)</label>
+                            <input type="number" id="maxPriceInput" min="0" placeholder="Any">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="billion-rating-filter">
+                    <label>Minimum Rating</label>
+                    <input type="range" min="0" max="5" step="0.5" value="0" class="billion-rating-slider" id="ratingSlider">
+                    <div class="billion-rating-value">
+                        <span id="ratingValue">0</span> <i class="fas fa-star" style="color: var(--billion-gold);"></i> & Above
+                    </div>
+                </div>
+                
+                <div class="billion-stock-filter">
+                    <div class="billion-filter-group">
+                        <label class="billion-switch">
+                            <input type="checkbox" id="inStockToggle">
+                            <span class="billion-slider"></span>
+                        </label>
+                        <span class="billion-filter-label">In Stock Only</span>
+                    </div>
+                </div>
+                
+                <button id="resetFiltersBtn" class="billion-reset-btn">
+                    <i class="fas fa-undo-alt me-2"></i> Reset Filters
+                </button>
+                
+                <button id="applyFiltersBtn" class="billion-filter-btn">
+                    <i class="fas fa-filter me-2"></i> Apply Filters
+                </button>
+            </div>
+        </div>
+        
+        <!-- Deals Container -->
+        <div class="col-lg-9">
+            <div id="dealsContainer">
+                <!-- Initially show loading -->
+                <div class="billion-loading">
+                    <div class="billion-loading-spinner"></div>
+                    <div class="billion-loading-text">Finding elite deals across platforms...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const platformButtons = document.querySelectorAll('.billion-platform-btn');
+        const sortSelect = document.getElementById('sortSelect');
+        const minPriceInput = document.getElementById('minPriceInput');
+        const maxPriceInput = document.getElementById('maxPriceInput');
+        const ratingSlider = document.getElementById('ratingSlider');
+        const ratingValue = document.getElementById('ratingValue');
+        const inStockToggle = document.getElementById('inStockToggle');
+        const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+        const applyFiltersBtn = document.getElementById('applyFiltersBtn');
+        const dealsContainer = document.getElementById('dealsContainer');
+        
+        let currentPlatform = 'all';
+        let currentSort = 'deal_score_desc';
+        let minPrice = null;
+        let maxPrice = null;
+        let minRating = 0;
+        let inStockOnly = false;
+        
+        // Update rating value display
+        ratingSlider.addEventListener('input', function() {
+            ratingValue.textContent = this.value;
+            minRating = parseFloat(this.value);
+        });
+        
+        // Platform button clicks
+        platformButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                platformButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                currentPlatform = this.dataset.platform;
+                fetchDeals();
+            });
+        });
+        
+        // Sort select change
+        sortSelect.addEventListener('change', function() {
+            currentSort = this.value;
+            fetchDeals();
+        });
+        
+        // Apply filters
+        applyFiltersBtn.addEventListener('click', function() {
+            minPrice = minPriceInput.value ? parseFloat(minPriceInput.value) : null;
+            maxPrice = maxPriceInput.value ? parseFloat(maxPriceInput.value) : null;
+            minRating = parseFloat(ratingSlider.value);
+            inStockOnly = inStockToggle.checked;
+            fetchDeals();
+        });
+        
+        // Reset filters
+        resetFiltersBtn.addEventListener('click', function() {
+            minPriceInput.value = '';
+            maxPriceInput.value = '';
+            ratingSlider.value = 0;
+            ratingValue.textContent = '0';
+            inStockToggle.checked = false;
+            
+            minPrice = null;
+            maxPrice = null;
+            minRating = 0;
+            inStockOnly = false;
+            
+            fetchDeals();
+        });
+        
+        // Initial fetch of deals
+        fetchDeals();
+        
+        function fetchDeals() {
+            // Show loading
+            dealsContainer.innerHTML = `
+                <div class="billion-loading">
+                    <div class="billion-loading-spinner"></div>
+                    <div class="billion-loading-text">Finding elite deals across platforms...</div>
+                </div>
+            `;
+            
+            // Parse sort options
+            const [sortBy, sortOrder] = currentSort.split('_');
+            
+            // Build query parameters
+            const params = new URLSearchParams({
+                query: '{{ query }}',
+                luxury: 'true'
+            });
+            
+            if (currentPlatform !== 'all') {
+                params.append('platform', currentPlatform);
+            }
+            
+            params.append('sort_by', sortBy);
+            params.append('sort_order', sortOrder);
+            
+            if (minPrice !== null) params.append('min_price', minPrice);
+            if (maxPrice !== null) params.append('max_price', maxPrice);
+            if (minRating > 0) params.append('min_rating', minRating);
+            if (inStockOnly) params.append('in_stock', 'true');
+            
+            // Fetch the deals
+            fetch(`/api/all-deals?${params.toString()}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        showNoDeals(data.error);
+                        return;
+                    }
+                    
+                    if (data.deals && data.deals.length > 0) {
+                        renderDeals(data.deals, data.query, data.total_deals, data.filtered_deals);
+                    } else {
+                        showNoDeals('No deals found matching your criteria');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNoDeals('An error occurred while fetching deals');
+                });
+        }
+        
+        function renderDeals(deals, query, totalDeals, filteredDeals) {
+            let dealsHTML = `
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Showing ${filteredDeals}</strong> of ${totalDeals} deals for <strong>"${query}"</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="billion-deals-container">
+            `;
+            
+            deals.forEach(deal => {
+                const platformClass = deal.platform ? `billion-platform-${deal.platform.toLowerCase()}` : '';
+                
+                dealsHTML += `
+                    <div class="billion-deal-card">
+                        <div class="billion-deal-image">
+                            <img src="${deal.image_url || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="${deal.name}">
+                            <div class="billion-deal-platform-badge ${platformClass}">
+                                <i class="fas ${getPlatformIcon(deal.platform)}"></i> ${deal.platform || 'Unknown'}
+                            </div>
+                            ${deal.discount_percent ? `<div class="billion-deal-discount">${deal.discount_percent}% OFF</div>` : ''}
+                        </div>
+                        <div class="billion-deal-content">
+                            <h3 class="billion-deal-name">${deal.name}</h3>
+                            <div class="billion-deal-price">
+                                <div class="billion-deal-current">$${formatPrice(deal.price)}</div>
+                                ${deal.original_price ? `<div class="billion-deal-original">$${formatPrice(deal.original_price)}</div>` : ''}
+                            </div>
+                            
+                            ${deal.rating ? `
+                                <div class="billion-deal-rating">
+                                    <div class="billion-deal-stars">
+                                        ${getStarRating(deal.rating)}
+                                    </div>
+                                    <div class="billion-deal-reviews">
+                                        ${deal.rating} ${deal.review_count ? `(${deal.review_count} reviews)` : ''}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            <div class="billion-deal-info">
+                                ${deal.in_stock ? `
+                                    <div class="billion-deal-info-item">
+                                        <i class="fas fa-check-circle" style="color: var(--billion-green);"></i> In Stock
+                                    </div>
+                                ` : `
+                                    <div class="billion-deal-info-item">
+                                        <i class="fas fa-times-circle" style="color: var(--billion-red);"></i> Out of Stock
+                                    </div>
+                                `}
+                                
+                                ${deal.delivery_time ? `
+                                    <div class="billion-deal-info-item">
+                                        <i class="fas fa-shipping-fast"></i> ${deal.delivery_time}
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            <div class="billion-deal-action">
+                                <a href="${deal.product_url}" target="_blank" class="billion-view-btn">
+                                    <i class="fas fa-external-link-alt me-2"></i> View Deal
+                                </a>
+                                <button class="billion-save-btn" title="Save for later">
+                                    <i class="far fa-bookmark"></i>
+                                </button>
+                            </div>
+                            
+                            ${deal.deal_score ? `
+                                <div class="billion-deal-score">
+                                    <div class="billion-score-label">
+                                        <span class="billion-score-text">Deal Score</span>
+                                        <span class="billion-score-value">${deal.deal_score}/100</span>
+                                    </div>
+                                    <div class="billion-score-bar">
+                                        <div class="billion-score-progress" style="width: ${deal.deal_score}%"></div>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            dealsHTML += `</div>`;
+            
+            dealsContainer.innerHTML = dealsHTML;
+            
+            // Animation for deal cards
+            const dealCards = document.querySelectorAll('.billion-deal-card');
+            dealCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 50 * index);
+            });
+        }
+        
+        function showNoDeals(message) {
+            dealsContainer.innerHTML = `
+                <div class="billion-no-deals">
+                    <div class="billion-no-deals-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h2 class="mb-3">No Deals Found</h2>
+                    <p class="text-muted mb-4">${message}</p>
+                    <button onclick="resetAllFilters()" class="btn billion-filter-btn">
+                        <i class="fas fa-undo-alt me-2"></i> Reset All Filters
+                    </button>
+                </div>
+            `;
+        }
+        
+        function getPlatformIcon(platform) {
+            if (!platform) return 'fa-store';
+            
+            const platformLower = platform.toLowerCase();
+            if (platformLower === 'amazon') return 'fa-amazon';
+            if (platformLower === 'walmart') return 'fa-shopping-cart';
+            if (platformLower === 'bestbuy') return 'fa-tag';
+            if (platformLower === 'target') return 'fa-bullseye';
+            if (platformLower === 'ebay') return 'fa-shopping-bag';
+            
+            return 'fa-store';
+        }
+        
+        function getStarRating(rating) {
+            let stars = '';
+            const ratingValue = parseFloat(rating);
+            
+            for (let i = 1; i <= 5; i++) {
+                if (i <= ratingValue) {
+                    stars += '<i class="fas fa-star"></i>';
+                } else if (i - 0.5 <= ratingValue) {
+                    stars += '<i class="fas fa-star-half-alt"></i>';
+                } else {
+                    stars += '<i class="far fa-star"></i>';
+                }
+            }
+            
+            return stars;
+        }
+        
+        function formatPrice(price) {
+            if (!price) return '0.00';
+            return parseFloat(price).toFixed(2);
+        }
+        
+        // Make this function global for the reset button in no deals message
+        window.resetAllFilters = function() {
+            minPriceInput.value = '';
+            maxPriceInput.value = '';
+            ratingSlider.value = 0;
+            ratingValue.textContent = '0';
+            inStockToggle.checked = false;
+            
+            platformButtons.forEach(btn => btn.classList.remove('active'));
+            platformButtons[0].classList.add('active');
+            
+            sortSelect.value = 'deal_score_desc';
+            
+            currentPlatform = 'all';
+            currentSort = 'deal_score_desc';
+            minPrice = null;
+            maxPrice = null;
+            minRating = 0;
+            inStockOnly = false;
+            
+            fetchDeals();
+        };
+    });
+</script>
+{% endblock %}

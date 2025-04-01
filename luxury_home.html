@@ -1,0 +1,473 @@
+{% extends 'base_luxury.html' %}
+
+{% block title %}LuxeSeeker | The Ultimate Luxury Shopping Experience{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Luxury Homepage Styles */
+    .billion-hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .billion-video-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+    }
+    
+    .billion-video-bg::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(13, 13, 13, 0.7);
+        background: linear-gradient(to bottom, rgba(13, 13, 13, 0.8), rgba(13, 13, 13, 0.5));
+    }
+    
+    .billion-video-bg video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .billion-hero-content {
+        text-align: center;
+        max-width: 800px;
+        padding: 2rem;
+        z-index: 1;
+    }
+    
+    .billion-hero-title {
+        font-size: 4rem;
+        font-weight: 800;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+        color: var(--billion-electric);
+        background: linear-gradient(135deg, var(--billion-electric) 30%, var(--billion-cyan));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+    }
+    
+    .billion-hero-subtitle {
+        font-size: 1.4rem;
+        color: var(--billion-white);
+        margin-bottom: 3rem;
+    }
+    
+    .billion-search-container {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+        margin-bottom: 3rem;
+        position: relative;
+    }
+    
+    .billion-search-bar {
+        width: 100%;
+        padding: 1.5rem 2rem;
+        padding-left: 4rem;
+        border-radius: 50px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--billion-white);
+        font-size: 1.2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .billion-search-bar:focus {
+        outline: none;
+        border-color: var(--billion-cyan);
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 15px 40px rgba(0, 255, 255, 0.1);
+    }
+    
+    .billion-search-icon {
+        position: absolute;
+        left: 1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--billion-cyan);
+        font-size: 1.2rem;
+    }
+    
+    .billion-voice-search {
+        position: absolute;
+        right: 1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--billion-cyan);
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .billion-voice-search:hover {
+        color: var(--billion-electric);
+    }
+    
+    .billion-features {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+        margin-bottom: 3rem;
+    }
+    
+    .billion-feature-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        border-radius: 16px;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    
+    .billion-feature-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+        transform: translateY(-5px);
+    }
+    
+    .billion-feature-icon {
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1.5rem;
+        font-size: 1.5rem;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .billion-icon-search { color: var(--billion-electric); }
+    .billion-icon-diamond { color: var(--billion-cyan); }
+    .billion-icon-ai { color: var(--billion-red); }
+    .billion-icon-compare { color: var(--billion-blue); }
+    
+    .billion-feature-text {
+        flex-grow: 1;
+    }
+    
+    .billion-feature-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--billion-white);
+    }
+    
+    .billion-feature-desc {
+        font-size: 1rem;
+        color: var(--billion-platinum);
+        margin-bottom: 0;
+    }
+    
+    .billion-action-buttons {
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    
+    .billion-explore-btn {
+        padding: 1.2rem 2.5rem;
+        border-radius: 50px;
+        background: var(--billion-gradient-blue);
+        color: var(--billion-black);
+        font-size: 1.1rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 10px 30px rgba(0, 123, 255, 0.3);
+        border: none;
+    }
+    
+    .billion-explore-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 123, 255, 0.4);
+        color: var(--billion-black);
+    }
+    
+    .billion-categories-btn {
+        padding: 1.2rem 2.5rem;
+        border-radius: 50px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--billion-white);
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .billion-categories-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-5px);
+        color: var(--billion-white);
+    }
+    
+    .billion-tag-line {
+        margin-top: 3rem;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--billion-white);
+        text-align: center;
+    }
+    
+    /* Glassmorphism card effect */
+    .billion-glass-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Animations */
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+    }
+    
+    .billion-float {
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    /* Glow effects */
+    .billion-glow {
+        box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+    }
+    
+    .billion-cyan-glow {
+        text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .billion-hero-title {
+            font-size: 2.5rem;
+        }
+        
+        .billion-hero-subtitle {
+            font-size: 1.1rem;
+        }
+        
+        .billion-search-bar {
+            padding: 1.2rem 1.5rem;
+            padding-left: 3.5rem;
+            font-size: 1rem;
+        }
+        
+        .billion-action-buttons {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .billion-explore-btn, 
+        .billion-categories-btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="billion-hero">
+    <!-- Video Background -->
+    <div class="billion-video-bg">
+        <!-- Fallback to gradient if video isn't available -->
+        <div style="width: 100%; height: 100%; background: linear-gradient(135deg, var(--billion-black), var(--billion-blue-dark));"></div>
+    </div>
+    
+    <div class="billion-hero-content">
+        <h1 class="billion-hero-title billion-cyan-glow">The Ultimate Luxury Shopping Experience</h1>
+        <p class="billion-hero-subtitle">Welcome to a world of curated elegance and exclusivity.</p>
+        
+        <!-- Search Bar -->
+        <div class="billion-search-container">
+            <form id="searchForm" action="/search" method="get">
+                <i class="fas fa-search billion-search-icon"></i>
+                <input type="text" class="billion-search-bar" id="queryInput" name="query" placeholder="Search for Premium Products" autofocus>
+                <input type="hidden" name="luxury" value="true">
+                <button type="button" class="billion-voice-search" id="voiceSearchBtn">
+                    <i class="fas fa-microphone"></i>
+                </button>
+            </form>
+        </div>
+        
+        <!-- Feature Highlights -->
+        <div class="billion-features">
+            <div class="billion-feature-item">
+                <div class="billion-feature-icon billion-icon-search">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="billion-feature-text">
+                    <h3 class="billion-feature-title">Search for Premium Products</h3>
+                    <p class="billion-feature-desc">Find what you desire instantly</p>
+                </div>
+            </div>
+            
+            <div class="billion-feature-item">
+                <div class="billion-feature-icon billion-icon-diamond">
+                    <i class="fas fa-gem"></i>
+                </div>
+                <div class="billion-feature-text">
+                    <h3 class="billion-feature-title">Exclusive Deals & Limited Editions</h3>
+                    <p class="billion-feature-desc">Handpicked for you</p>
+                </div>
+            </div>
+            
+            <div class="billion-feature-item">
+                <div class="billion-feature-icon billion-icon-ai">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="billion-feature-text">
+                    <h3 class="billion-feature-title">AI-Powered Recommendations</h3>
+                    <p class="billion-feature-desc">Personalized luxury at fingertips</p>
+                </div>
+            </div>
+            
+            <div class="billion-feature-item">
+                <div class="billion-feature-icon billion-icon-compare">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <div class="billion-feature-text">
+                    <h3 class="billion-feature-title">Compare & Shop Smarter</h3>
+                    <p class="billion-feature-desc">Best brands, best prices</p>
+                </div>
+            </div>
+        </div>
+        
+        <p class="billion-tag-line">Indulge in the Finest Shopping Experience.</p>
+        
+        <!-- Action Buttons -->
+        <div class="billion-action-buttons">
+            <a href="/search?luxury=true" class="billion-explore-btn">
+                Explore Now
+            </a>
+            <a href="/categories?luxury=true" class="billion-categories-btn">
+                Categories
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchForm = document.getElementById('searchForm');
+        const queryInput = document.getElementById('queryInput');
+        const voiceSearchBtn = document.getElementById('voiceSearchBtn');
+        
+        // Handle form submission
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (queryInput.value.trim() !== '') {
+                this.submit();
+            }
+        });
+        
+        // Voice search functionality
+        if (voiceSearchBtn && 'webkitSpeechRecognition' in window) {
+            const recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+            
+            voiceSearchBtn.addEventListener('click', function() {
+                recognition.start();
+                voiceSearchBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+                voiceSearchBtn.style.color = 'var(--billion-red)';
+            });
+            
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                queryInput.value = transcript;
+                setTimeout(() => searchForm.submit(), 500);
+            };
+            
+            recognition.onend = function() {
+                voiceSearchBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                voiceSearchBtn.style.color = 'var(--billion-cyan)';
+            };
+            
+            recognition.onerror = function() {
+                voiceSearchBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                voiceSearchBtn.style.color = 'var(--billion-cyan)';
+                alert('Voice recognition failed. Please try again or type your search.');
+            };
+        } else {
+            voiceSearchBtn.style.display = 'none';
+        }
+        
+        // Placeholder rotation for search input
+        const placeholders = [
+            "Search for luxury watches...",
+            "Find premium headphones...",
+            "Discover designer bags...",
+            "Explore high-end smartphones...",
+            "Search for luxury home decor..."
+        ];
+        
+        let currentPlaceholder = 0;
+        
+        function rotatePlaceholders() {
+            currentPlaceholder = (currentPlaceholder + 1) % placeholders.length;
+            if (document.activeElement !== queryInput) {
+                queryInput.placeholder = placeholders[currentPlaceholder];
+            }
+        }
+        
+        setInterval(rotatePlaceholders, 3000);
+        
+        queryInput.addEventListener('focus', function() {
+            this.placeholder = "Search for Premium Products";
+        });
+        
+        queryInput.addEventListener('blur', function() {
+            if (this.value === '') {
+                this.placeholder = placeholders[currentPlaceholder];
+            }
+        });
+        
+        // Animations for feature items
+        const featureItems = document.querySelectorAll('.billion-feature-item');
+        
+        featureItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                item.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, 300 + (index * 150));
+        });
+    });
+</script>
+{% endblock %}

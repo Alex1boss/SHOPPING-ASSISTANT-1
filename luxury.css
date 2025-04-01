@@ -1,0 +1,1001 @@
+@import url('luxury_palette.css');
+
+:root {
+    /* Map billion-dollar colors to luxury theme variables */
+    --luxury-bg: var(--billion-black);
+    --luxury-card-bg: var(--billion-grey);
+    --luxury-border: rgba(255, 255, 255, 0.05);
+    --luxury-text: var(--billion-white);
+    --luxury-text-muted: rgba(255, 255, 255, 0.6);
+    --luxury-accent: var(--billion-cyan);
+    --luxury-accent-dark: var(--billion-blue);
+    --luxury-gold: var(--billion-gold);
+    --luxury-silver: var(--billion-platinum);
+    --luxury-emerald: var(--billion-green);
+    --luxury-ruby: var(--billion-red);
+    --luxury-midnight: var(--billion-purple);
+    
+    /* Platform colors */
+    --amazon-color: #FF9900;
+    --walmart-color: #0071DC;
+    --bestbuy-color: #0046BE;
+    --target-color: #CC0000;
+    --ebay-color: #E53238;
+}
+
+/* Base Luxury Theme Styles */
+.luxury-theme {
+    background-color: var(--billion-black);
+    background-image: 
+        radial-gradient(circle at 10% 10%, rgba(0, 255, 255, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 90% 90%, rgba(75, 0, 130, 0.05) 0%, transparent 40%),
+        linear-gradient(135deg, rgba(23, 63, 95, 0.02) 0%, rgba(0, 123, 255, 0.01) 100%),
+        var(--billion-bg-pattern);
+    color: var(--luxury-text);
+    font-family: 'Montserrat', sans-serif;
+    position: relative;
+}
+
+.luxury-theme h1, .luxury-theme h2, .luxury-theme h3, .luxury-theme h4, .luxury-theme h5, .luxury-theme h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.luxury-theme a {
+    color: var(--luxury-accent);
+    transition: color 0.3s ease;
+}
+
+.luxury-theme a:hover {
+    color: var(--luxury-gold);
+    text-decoration: none;
+}
+
+.luxury-theme .btn {
+    border-radius: 6px;
+    font-weight: 600;
+    padding: 0.7rem 1.5rem;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    letter-spacing: 0.3px;
+    position: relative;
+    overflow: hidden;
+}
+
+.luxury-theme .btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 100%
+    );
+    transform: rotate(30deg);
+    transition: transform 0.5s ease;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.luxury-theme .btn:hover::after {
+    opacity: 1;
+    transform: rotate(30deg) translate(100px, 0);
+}
+
+.luxury-theme .btn-warning {
+    background: var(--billion-gradient-gold);
+    border: none;
+    color: #000;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+}
+
+.luxury-theme .btn-warning:hover {
+    background: linear-gradient(135deg, #FFDF00, var(--billion-gold));
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.luxury-theme .btn-primary {
+    background: var(--billion-gradient-accent);
+    border: none;
+    color: var(--billion-white);
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+}
+
+.luxury-theme .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+}
+
+.luxury-theme .btn-outline-light {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--luxury-text);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(5px);
+}
+
+.luxury-theme .btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: var(--luxury-text);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.luxury-theme .form-control,
+.luxury-theme .form-select {
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 255, 255, 0.1);
+    color: var(--billion-white);
+    border-radius: 8px;
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.luxury-theme .form-control:focus,
+.luxury-theme .form-select:focus {
+    background-color: rgba(0, 0, 0, 0.4);
+    border-color: var(--billion-cyan);
+    box-shadow: 0 0 0 2px rgba(0, 255, 255, 0.15), 0 5px 20px rgba(0, 0, 0, 0.2);
+    color: var(--billion-white);
+    transform: translateY(-2px);
+}
+
+.luxury-theme .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+}
+
+.luxury-theme .form-label {
+    color: var(--billion-cyan);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.luxury-theme .form-check-input {
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-top: 0.15rem;
+    transition: all 0.3s ease;
+}
+
+.luxury-theme .form-check-input:checked {
+    background-color: var(--billion-cyan);
+    border-color: var(--billion-cyan);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+.luxury-theme .form-check-label {
+    font-size: 0.95rem;
+    padding-left: 0.3rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Search input special styling */
+.luxury-theme .search-input-container {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.luxury-theme .search-input {
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 255, 255, 0.1);
+    color: var(--billion-white);
+    border-radius: 12px;
+    font-size: 1.1rem;
+    padding: 1.2rem 1.2rem 1.2rem 3rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.luxury-theme .search-input:focus {
+    background-color: rgba(0, 0, 0, 0.4);
+    border-color: var(--billion-cyan);
+    box-shadow: 0 0 0 2px rgba(0, 255, 255, 0.15), 0 15px 40px rgba(0, 0, 0, 0.3);
+    transform: translateY(-3px);
+}
+
+.luxury-theme .search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--billion-cyan);
+    font-size: 1.2rem;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.luxury-theme .search-input:focus + .search-icon {
+    color: var(--billion-white);
+}
+
+.luxury-theme .card {
+    background: var(--billion-gradient-main);
+    border: var(--billion-border);
+    border-radius: 12px;
+    box-shadow: var(--billion-shadow);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+}
+
+.luxury-theme .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0), rgba(0, 255, 255, 0.03) 50%, rgba(0, 0, 0, 0) 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.luxury-theme .card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--billion-shadow-lg), 0 0 20px rgba(0, 255, 255, 0.1);
+}
+
+.luxury-theme .card:hover::before {
+    opacity: 1;
+}
+
+/* Luxury Navbar */
+.luxury-navbar {
+    background-color: rgba(13, 13, 13, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(0, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.luxury-navbar.scrolled {
+    background-color: rgba(13, 13, 13, 0.95);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3), 0 0 10px rgba(0, 255, 255, 0.05);
+}
+
+.luxury-brand-icon {
+    width: 45px;
+    height: 45px;
+    background: var(--billion-gradient-accent);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 22px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+.luxury-brand-icon::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 100%
+    );
+    transform: rotate(30deg);
+    animation: luxury-shine 4s infinite;
+    pointer-events: none;
+}
+
+.luxury-brand-text {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    background: linear-gradient(135deg, var(--billion-white) 30%, var(--billion-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+/* Luxury Footer */
+.luxury-footer {
+    background-color: rgba(20, 23, 31, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--luxury-text-muted);
+}
+
+.luxury-footer-heading {
+    color: var(--luxury-text);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.luxury-footer-links a {
+    color: var(--luxury-text-muted);
+    display: block;
+    margin-bottom: 0.8rem;
+    transition: color 0.3s ease;
+}
+
+.luxury-footer-links a:hover {
+    color: var(--luxury-gold);
+}
+
+.luxury-social-icons a {
+    color: var(--luxury-text-muted);
+    font-size: 1.4rem;
+    transition: color 0.3s ease;
+}
+
+.luxury-social-icons a:hover {
+    color: var(--luxury-gold);
+}
+
+.luxury-divider {
+    border-color: rgba(255, 255, 255, 0.1);
+    margin: 1.5rem 0;
+}
+
+.luxury-copyright {
+    color: var(--luxury-text-muted);
+    font-size: 0.9rem;
+}
+
+.luxury-text-muted {
+    color: var(--luxury-text-muted) !important;
+}
+
+/* Billion-Dollar Luxury Product Cards */
+.luxury-product-card {
+    background: var(--billion-gradient-main);
+    border: var(--billion-border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    z-index: 1;
+}
+
+.luxury-product-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+                rgba(0, 0, 0, 0), 
+                rgba(0, 255, 255, 0.03) 50%, 
+                rgba(0, 0, 0, 0) 100%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: -1;
+}
+
+.luxury-product-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: var(--billion-shadow-lg), 0 0 30px rgba(0, 255, 255, 0.15);
+    border-color: rgba(0, 255, 255, 0.1);
+}
+
+.luxury-product-card:hover::before {
+    opacity: 1;
+}
+
+.luxury-product-image-container {
+    height: 280px;
+    background-color: var(--billion-black);
+    position: relative;
+    overflow: hidden;
+}
+
+.luxury-product-image-container::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to top, var(--billion-black), transparent);
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.luxury-product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    filter: brightness(1.05) contrast(1.05);
+}
+
+.luxury-product-card:hover .luxury-product-image {
+    transform: scale(1.08) translateY(-5px);
+    filter: brightness(1.1) contrast(1.1);
+}
+
+.luxury-platform-badge {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 255, 255, 0.1);
+    color: var(--billion-white);
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.luxury-platform-badge:hover {
+    border-color: rgba(0, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 255, 255, 0.2);
+}
+
+.luxury-deal-score {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 215, 0, 0.1);
+    color: var(--billion-gold);
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.luxury-deal-score:hover {
+    border-color: rgba(255, 215, 0, 0.3);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.1);
+}
+
+.luxury-product-title {
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--billion-white) 70%, var(--billion-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+.luxury-product-description {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 1.5rem;
+}
+
+.luxury-features-list {
+    padding-left: 1.4rem;
+    margin-bottom: 2rem;
+}
+
+.luxury-features-list li {
+    margin-bottom: 0.7rem;
+    color: rgba(255, 255, 255, 0.8);
+    position: relative;
+}
+
+.luxury-features-list li::before {
+    content: '•';
+    color: var(--billion-cyan);
+    position: absolute;
+    left: -1.4rem;
+    font-size: 1.2rem;
+}
+
+.luxury-view-deal-btn {
+    font-weight: 600;
+    padding: 0.7rem 1.2rem;
+    background: linear-gradient(135deg, var(--billion-cyan), var(--billion-electric));
+    border: none;
+    color: var(--billion-black);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.4s ease;
+    box-shadow: 0 4px 15px rgba(0, 255, 255, 0.2);
+}
+
+.luxury-view-deal-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 255, 255, 0.4);
+}
+
+.luxury-compare-btn {
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.luxury-compare-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--billion-cyan);
+    transition: width 0.3s ease;
+}
+
+.luxury-compare-btn:hover::after {
+    width: 100%;
+}
+
+/* Billion-Dollar Super Deal Page */
+.super-deal-card {
+    background: var(--billion-gradient-main);
+    border: var(--billion-border);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--billion-shadow-lg), 0 0 30px rgba(0, 255, 255, 0.1);
+    position: relative;
+    z-index: 1;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.super-deal-card:hover {
+    box-shadow: var(--billion-shadow-lg), 0 0 40px rgba(0, 255, 255, 0.2);
+    transform: translateY(-5px);
+}
+
+.super-deal-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top right, rgba(0, 255, 255, 0.05), transparent 70%);
+    z-index: -1;
+}
+
+.super-deal-card .card-header {
+    border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 1.5rem;
+}
+
+.super-deal-exclusive-tag {
+    background: linear-gradient(135deg, var(--billion-gold), #E6C200);
+    color: #000;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 30px;
+    display: inline-block;
+    margin-bottom: 1rem;
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.super-deal-exclusive-tag::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 100%
+    );
+    transform: rotate(30deg);
+    animation: billion-shine 4s infinite;
+    pointer-events: none;
+}
+
+.super-deal-name {
+    font-weight: 800;
+    font-size: 2rem;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--billion-white) 60%, var(--billion-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+.super-deal-description {
+    line-height: 1.8;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1.5rem;
+}
+
+.super-deal-price-container {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border: 1px solid rgba(0, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.super-deal-price-label {
+    color: var(--billion-cyan);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+}
+
+.super-deal-current-price {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--billion-white);
+    margin-bottom: 0.5rem;
+}
+
+.super-deal-original-price {
+    font-size: 1.3rem;
+    text-decoration: line-through;
+    color: rgba(255, 255, 255, 0.5);
+    margin-left: 1rem;
+}
+
+.super-deal-discount {
+    background: linear-gradient(135deg, var(--billion-red), #800020);
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(215, 38, 56, 0.3);
+}
+
+.super-deal-btn {
+    background: linear-gradient(135deg, var(--billion-cyan), var(--billion-electric));
+    color: var(--billion-black);
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.super-deal-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 255, 255, 0.5);
+}
+
+.super-deal-features-title {
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    color: var(--billion-white);
+}
+
+.features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+}
+
+.features-list li {
+    margin-bottom: 1.2rem;
+    padding-left: 2rem;
+    position: relative;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.05rem;
+}
+
+.features-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--billion-cyan);
+    font-weight: 700;
+}
+
+.share-buttons .btn {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 255, 255, 0.1);
+    color: var(--billion-white);
+    transition: all 0.3s ease;
+    margin-right: 0.7rem;
+}
+
+.share-buttons .btn:hover {
+    background: var(--billion-gradient-accent);
+    border-color: transparent;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Form Elements */
+.luxury-input {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--luxury-text);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.luxury-input:focus {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-color: var(--luxury-accent);
+    box-shadow: 0 0 0 3px rgba(14, 142, 255, 0.1);
+    color: var(--luxury-text);
+}
+
+/* Platform Badge Colors (billion-dollar version) */
+.luxury-platform-badge[data-platform="amazon"] {
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 153, 0, 0.3);
+    color: rgba(255, 153, 0, 0.9);
+    box-shadow: 0 4px 15px rgba(255, 153, 0, 0.15);
+}
+
+.luxury-platform-badge[data-platform="amazon"]:hover {
+    border-color: rgba(255, 153, 0, 0.5);
+    box-shadow: 0 4px 20px rgba(255, 153, 0, 0.25);
+    color: rgba(255, 153, 0, 1);
+}
+
+.luxury-platform-badge[data-platform="walmart"] {
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(0, 113, 220, 0.3);
+    color: rgba(0, 113, 220, 0.9);
+    box-shadow: 0 4px 15px rgba(0, 113, 220, 0.15);
+}
+
+.luxury-platform-badge[data-platform="walmart"]:hover {
+    border-color: rgba(0, 113, 220, 0.5);
+    box-shadow: 0 4px 20px rgba(0, 113, 220, 0.25);
+    color: rgba(0, 113, 220, 1);
+}
+
+.luxury-platform-badge[data-platform="bestbuy"] {
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(0, 70, 190, 0.3);
+    color: rgba(0, 70, 190, 0.9);
+    box-shadow: 0 4px 15px rgba(0, 70, 190, 0.15);
+}
+
+.luxury-platform-badge[data-platform="bestbuy"]:hover {
+    border-color: rgba(0, 70, 190, 0.5);
+    box-shadow: 0 4px 20px rgba(0, 70, 190, 0.25);
+    color: rgba(0, 70, 190, 1);
+}
+
+.luxury-platform-badge[data-platform="target"] {
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(204, 0, 0, 0.3);
+    color: rgba(204, 0, 0, 0.9);
+    box-shadow: 0 4px 15px rgba(204, 0, 0, 0.15);
+}
+
+.luxury-platform-badge[data-platform="target"]:hover {
+    border-color: rgba(204, 0, 0, 0.5);
+    box-shadow: 0 4px 20px rgba(204, 0, 0, 0.25);
+    color: rgba(204, 0, 0, 1);
+}
+
+.luxury-platform-badge[data-platform="ebay"] {
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(229, 50, 56, 0.3);
+    color: rgba(229, 50, 56, 0.9);
+    box-shadow: 0 4px 15px rgba(229, 50, 56, 0.15);
+}
+
+.luxury-platform-badge[data-platform="ebay"]:hover {
+    border-color: rgba(229, 50, 56, 0.5);
+    box-shadow: 0 4px 20px rgba(229, 50, 56, 0.25);
+    color: rgba(229, 50, 56, 1);
+}
+
+/* Billion-Dollar Luxury Animations */
+@keyframes billion-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.billion-fade-in {
+    animation: billion-fade-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes billion-shine {
+    0% {
+        background-position: -200px;
+    }
+    40% {
+        background-position: 400px;
+    }
+    100% {
+        background-position: 400px;
+    }
+}
+
+.billion-shine {
+    position: relative;
+    overflow: hidden;
+}
+
+.billion-shine::after {
+    content: "";
+    position: absolute;
+    top: -100%;
+    left: -100%;
+    width: 300%;
+    height: 300%;
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(0, 255, 255, 0.1) 10%,
+        rgba(0, 255, 255, 0.2) 20%,
+        rgba(0, 255, 255, 0.1) 30%,
+        transparent 40%
+    );
+    transform: rotate(30deg);
+    animation: billion-shine 4s infinite;
+    pointer-events: none;
+}
+
+@keyframes billion-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.6);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(0, 255, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 255, 0);
+    }
+}
+
+.billion-pulse {
+    animation: billion-pulse 2.5s infinite;
+}
+
+@keyframes billion-float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.billion-float {
+    animation: billion-float 6s ease-in-out infinite;
+}
+
+@keyframes billion-glow {
+    0% {
+        filter: drop-shadow(0 0 2px rgba(0, 255, 255, 0.3));
+    }
+    50% {
+        filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.6));
+    }
+    100% {
+        filter: drop-shadow(0 0 2px rgba(0, 255, 255, 0.3));
+    }
+}
+
+.billion-glow {
+    animation: billion-glow 4s ease-in-out infinite;
+}
+
+/* Advanced 3D Tilt Effect */
+.billion-tilt {
+    transform-style: preserve-3d;
+    transform: perspective(1000px);
+    transition: transform 0.1s ease;
+}
+
+.billion-tilt-inner {
+    transform: translateZ(20px);
+    transition: transform 0.3s ease;
+}
+
+/* Particle Animations */
+@keyframes billion-particle {
+    0% {
+        transform: translate(0, 0);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(var(--x), var(--y));
+        opacity: 0;
+    }
+}
+
+.billion-particle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: var(--billion-cyan);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: billion-particle 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Media Queries */
+@media (max-width: 992px) {
+    .luxury-product-image-container {
+        height: 220px;
+    }
+}
+
+@media (max-width: 768px) {
+    .luxury-product-image-container {
+        height: 200px;
+    }
+}
+
+@media (max-width: 576px) {
+    .luxury-product-title {
+        font-size: 1rem;
+    }
+    
+    .luxury-product-image-container {
+        height: 180px;
+    }
+}

@@ -1,0 +1,640 @@
+:root {
+    --primary-color: #8A2BE2;
+    --primary-dark: #5E1B95;
+    --primary-light: #B980FF;
+    --secondary-color: #FFD700;
+    --accent-color: #FF6B6B;
+    --bg-color: #121212;
+    --bg-light: #1E1E1E;
+    --bg-lighter: #2A2A2A;
+    --text-color: #F5F5F5;
+    --text-muted: #AAAAAA;
+    --border-color: #333333;
+    
+    --amazon-color: #FF9900;
+    --walmart-color: #0071DC;
+    --bestbuy-color: #0046BE;
+    --target-color: #CC0000;
+    --ebay-color: #E53238;
+}
+
+/* Base Styles */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+a {
+    color: var(--primary-light);
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    color: var(--primary-color);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+.btn-warning {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: #000;
+}
+
+.btn-warning:hover {
+    background-color: #E6C300;
+    border-color: #E6C300;
+    color: #000;
+}
+
+.btn-accent {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}
+
+.btn-accent:hover {
+    background-color: #FF5252;
+    border-color: #FF5252;
+    color: white;
+}
+
+.btn-outline-light {
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+.btn-outline-light:hover {
+    background-color: var(--bg-lighter);
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+.card {
+    background-color: var(--bg-light);
+    border: none;
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.text-light {
+    color: var(--text-color) !important;
+}
+
+.text-accent {
+    color: var(--accent-color) !important;
+}
+
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+/* Navigation */
+.navbar {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: rgba(18, 18, 18, 0.95);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.4rem;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: white;
+}
+
+/* Footer */
+.footer {
+    background-color: var(--bg-light);
+    color: var(--text-muted);
+    padding-top: 3rem;
+    padding-bottom: 1rem;
+}
+
+.footer h5 {
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.footer .social-icons a {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.footer .social-icons a:hover {
+    color: var(--primary-color);
+}
+
+/* Home Page */
+.banner-slide {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.category-icons-row .category-icon-container {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto;
+    background-color: var(--bg-lighter);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.category-icons-row .category-icon-link:hover .category-icon-container {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.category-icons-row .category-label {
+    color: var(--text-color);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.search-input {
+    background-color: var(--bg-lighter);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px 0 0 8px;
+}
+
+.search-input:focus {
+    background-color: var(--bg-lighter);
+    border-color: var(--primary-color);
+    box-shadow: none;
+    color: var(--text-color);
+}
+
+.search-btn {
+    border-radius: 0 8px 8px 0;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+/* Product Cards */
+.product-card {
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.product-image-container {
+    height: 200px;
+    background-color: var(--bg-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.05);
+}
+
+.product-platform-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: var(--bg-light);
+    color: var(--text-color);
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 5px;
+    z-index: 2;
+}
+
+.amazon-badge {
+    background-color: var(--amazon-color);
+    color: #000;
+}
+
+.walmart-badge {
+    background-color: var(--walmart-color);
+    color: white;
+}
+
+.bestbuy-badge {
+    background-color: var(--bestbuy-color);
+    color: white;
+}
+
+.target-badge {
+    background-color: var(--target-color);
+    color: white;
+}
+
+.ebay-badge {
+    background-color: var(--ebay-color);
+    color: white;
+}
+
+
+
+.product-title {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    min-height: 2.8rem;
+}
+
+.rating {
+    color: var(--text-muted);
+}
+
+.rating .fas.fa-star, .rating .fas.fa-star-half-alt {
+    color: #FFC107;
+}
+
+.rating .far.fa-star {
+    color: #FFC107;
+}
+
+.current-price {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.original-price {
+    font-size: 0.9rem;
+    text-decoration: line-through;
+    color: var(--text-muted);
+    margin-left: 0.5rem;
+}
+
+.discount-badge {
+    background-color: var(--accent-color);
+    color: white;
+    font-size: 0.8rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.view-deal-btn {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    font-weight: 500;
+}
+
+.view-deal-btn:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+/* Platform Cards */
+.platform-card {
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.platform-card:hover {
+    transform: translateY(-5px);
+}
+
+.platform-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.amazon-icon {
+    color: var(--amazon-color);
+}
+
+.walmart-icon {
+    color: var(--walmart-color);
+}
+
+.bestbuy-icon {
+    color: var(--bestbuy-color);
+}
+
+.target-icon {
+    color: var(--target-color);
+}
+
+.ebay-icon {
+    color: var(--ebay-color);
+}
+
+
+
+/* Super Deal Page */
+.super-deal-card {
+    overflow: hidden;
+    border-radius: 15px;
+    border: none;
+}
+
+.super-deal-image-container {
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--bg-color);
+}
+
+.super-deal-platform-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 5px;
+    font-weight: 600;
+    z-index: 2;
+}
+
+.super-deal-price {
+    color: var(--secondary-color);
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.super-deal-rating {
+    display: flex;
+    align-items: center;
+}
+
+.super-deal-rating .fas.fa-star {
+    color: var(--secondary-color);
+}
+
+.super-deal-reviews {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.availability-badge {
+    font-weight: 500;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+}
+
+.deal-score {
+    font-weight: 600;
+    color: var(--secondary-color);
+}
+
+.super-deal-btn {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: #000;
+    font-weight: 600;
+}
+
+.super-deal-btn:hover {
+    background-color: #E6C300;
+    border-color: #E6C300;
+    color: #000;
+}
+
+/* All Deals Page */
+.filter-card {
+    position: sticky;
+    top: 20px;
+}
+
+.platform-filters .form-check {
+    margin-bottom: 0.5rem;
+}
+
+.platform-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.platform-label {
+    display: flex;
+    align-items: center;
+}
+
+.deal-score-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--secondary-color);
+    color: #000;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.3rem 0.6rem;
+    border-radius: 5px;
+    z-index: 2;
+}
+
+/* Error Page */
+.error-container {
+    text-align: center;
+    padding: 5rem 0;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.error-code {
+    font-size: 8rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.error-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.error-description {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+}
+
+.app-info {
+    margin-top: 3rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* History Page */
+.trending-tag {
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 0.8rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.product-features {
+    padding-left: 1.2rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.btn-compare {
+    background: none;
+    border: none;
+    color: var(--primary-light);
+    font-size: 0.9rem;
+    padding: 0;
+    text-align: left;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.btn-compare:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.btn-buy-now {
+    background-color: var(--accent-color);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 0.5rem 0;
+    border-radius: 5px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.btn-buy-now:hover {
+    background-color: #FF5252;
+}
+
+.affiliate-links .btn {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.5rem;
+}
+
+.amazon-link {
+    color: var(--amazon-color);
+    border-color: var(--amazon-color);
+}
+
+.amazon-link:hover {
+    background-color: var(--amazon-color);
+    color: white;
+}
+
+.bestbuy-link {
+    color: var(--bestbuy-color);
+    border-color: var(--bestbuy-color);
+}
+
+.bestbuy-link:hover {
+    background-color: var(--bestbuy-color);
+    color: white;
+}
+
+.walmart-link {
+    color: var(--walmart-color);
+    border-color: var(--walmart-color);
+}
+
+.walmart-link:hover {
+    background-color: var(--walmart-color);
+    color: white;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .product-image-container {
+        height: 180px;
+    }
+    
+    .super-deal-image-container {
+        height: 250px;
+    }
+    
+    .error-code {
+        font-size: 6rem;
+    }
+    
+    .error-title {
+        font-size: 1.8rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fadeIn {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}

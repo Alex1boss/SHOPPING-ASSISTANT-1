@@ -1,0 +1,304 @@
+{% extends 'base_mobile.html' %}
+
+{% block title %}Super Deal - ShopAI{% endblock %}
+
+{% block content %}
+<div class="section-title">
+    <i class="fas fa-bolt text-warning me-2"></i> Super Deal Finder
+</div>
+
+{% if not query %}
+<!-- Super Deal Search Form -->
+<div class="p-3">
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Find the Best Deal Across All Platforms</h5>
+            <form id="superDealForm" method="post" action="/super-deal">
+                <div class="mb-3">
+                    <label for="dealQuery" class="form-label">What are you looking for?</label>
+                    <input type="text" class="form-control" id="dealQuery" name="query" placeholder="e.g. iPhone 14, 4K TV, Air Fryer..." required>
+                </div>
+                <button type="submit" class="btn btn-warning w-100" id="findDealBtn">
+                    <i class="fas fa-bolt me-2"></i> Find Super Deal
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="super-deal-info p-3 bg-light rounded">
+        <h6 class="mb-2"><i class="fas fa-info-circle text-primary me-2"></i> How Super Deal Works</h6>
+        <ul class="mb-0 ps-3" style="font-size: 0.9rem;">
+            <li>We search across Amazon, Walmart, Best Buy, Target, and eBay</li>
+            <li>Our AI compares prices, shipping, reviews, and seller ratings</li>
+            <li>We find the absolute best deal based on value, not just price</li>
+            <li>Results include price history to ensure you're getting a true deal</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Recent Super Deals -->
+<div class="section-title">
+    Recent Super Deals
+</div>
+
+<div class="px-3 pb-3">
+    <!-- Super Deal Example Cards -->
+    <div class="card mb-3 super-deal-card">
+        <div class="card-body p-0">
+            <div class="d-flex">
+                <div class="super-deal-image" style="width: 120px; height: 120px; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center;">
+                    <img src="https://via.placeholder.com/120x120?text=Headphones" style="max-width: 100%; max-height: 100%; object-fit: contain;" alt="Sony WH-1000XM4">
+                </div>
+                <div class="p-3" style="flex: 1;">
+                    <div class="mb-1">
+                        <span class="badge bg-warning text-dark">Best Deal</span>
+                        <span class="badge bg-info text-white ms-1">Save 34%</span>
+                    </div>
+                    <h5 class="mb-1" style="font-size: 1rem;">Sony WH-1000XM4 Wireless Headphones</h5>
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="fw-bold me-2" style="font-size: 1.1rem;">₹19,990</span>
+                        <span class="text-decoration-line-through text-muted" style="font-size: 0.8rem;">₹29,990</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-light text-dark">Amazon</span>
+                        <button class="btn btn-sm btn-primary">View Deal</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-3 super-deal-card">
+        <div class="card-body p-0">
+            <div class="d-flex">
+                <div class="super-deal-image" style="width: 120px; height: 120px; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center;">
+                    <img src="https://via.placeholder.com/120x120?text=Smart+TV" style="max-width: 100%; max-height: 100%; object-fit: contain;" alt="Samsung 55-inch TV">
+                </div>
+                <div class="p-3" style="flex: 1;">
+                    <div class="mb-1">
+                        <span class="badge bg-warning text-dark">Best Deal</span>
+                        <span class="badge bg-info text-white ms-1">Save 28%</span>
+                    </div>
+                    <h5 class="mb-1" style="font-size: 1rem;">Samsung 55" Crystal 4K UHD Smart TV</h5>
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="fw-bold me-2" style="font-size: 1.1rem;">₹42,990</span>
+                        <span class="text-decoration-line-through text-muted" style="font-size: 0.8rem;">₹59,900</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-light text-dark">Flipkart</span>
+                        <button class="btn btn-sm btn-primary">View Deal</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- Super Deal Result -->
+<div class="p-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h5 class="mb-0">Best deal for "{{ query }}"</h5>
+            {% if request.args.get('category') %}
+            <div class="small text-muted">
+                <i class="fas fa-tag me-1"></i> Category: {{ request.args.get('category')|capitalize }}
+            </div>
+            {% endif %}
+        </div>
+        <a href="/super-deal" class="btn btn-sm btn-outline-primary">New Search</a>
+    </div>
+    
+    {% if deal %}
+    <div class="card super-deal-result mb-4">
+        <div class="super-deal-header p-3 bg-warning-subtle text-center">
+            <span class="badge bg-warning text-dark mb-2 py-2 px-3">
+                <i class="fas fa-trophy me-1"></i> BEST OVERALL DEAL
+            </span>
+            <h4 class="mb-1">{{ deal.name }}</h4>
+            <div class="deal-score d-flex align-items-center justify-content-center mb-2">
+                <span class="me-2 fw-bold fs-5">Deal Score:</span>
+                <div class="progress" style="height: 24px; width: 150px;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ deal.deal_score }}%;" 
+                         aria-valuenow="{{ deal.deal_score }}" aria-valuemin="0" aria-valuemax="100">
+                        {{ deal.deal_score }}/100
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            <div class="text-center mb-3">
+                {% if deal.image_url %}
+                <img src="{{ deal.image_url }}" class="super-deal-image" style="max-height: 200px; max-width: 100%;" alt="{{ deal.name }}">
+                {% else %}
+                <div class="super-deal-image-placeholder" style="height: 200px; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-image fa-3x text-muted"></i>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="price-comparison mb-3">
+                <div class="d-flex justify-content-center align-items-center">
+                    <h3 class="fw-bold text-success me-2 mb-0">₹{{ "%.2f"|format(deal.price) }}</h3>
+                    {% if deal.original_price and deal.original_price > deal.price %}
+                    <span class="text-decoration-line-through text-muted fs-5">₹{{ "%.2f"|format(deal.original_price) }}</span>
+                    {% endif %}
+                </div>
+                
+                {% if deal.discount_percent and deal.discount_percent > 0 %}
+                <div class="text-center">
+                    <span class="badge bg-danger fs-6 mt-2">{{ deal.discount_percent }}% OFF</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="platform-info d-flex align-items-center justify-content-center mb-3">
+                <span class="badge bg-light text-dark fs-6 px-3 py-2">
+                    {% if deal.platform %}
+                    <i class="fas {% if deal.platform == 'amazon' %}fa-amazon{% elif deal.platform == 'walmart' %}fa-shopping-cart{% elif deal.platform == 'bestbuy' %}fa-laptop{% elif deal.platform == 'target' %}fa-bullseye{% elif deal.platform == 'ebay' %}fa-exchange-alt{% else %}fa-store{% endif %} me-1"></i>
+                    {{ deal.platform|capitalize }}
+                    {% else %}
+                    <i class="fas fa-store me-1"></i>
+                    Best Retailer
+                    {% endif %}
+                </span>
+            </div>
+            
+            <div class="deal-details mb-3">
+                {% if deal.rating %}
+                <div class="rating mb-2 text-center">
+                    <div class="stars d-inline-block">
+                        {% for i in range(5) %}
+                            {% if i < deal.rating|int %}
+                                <i class="fas fa-star text-warning"></i>
+                            {% elif i < (deal.rating|float) and i >= (deal.rating|int) %}
+                                <i class="fas fa-star-half-alt text-warning"></i>
+                            {% else %}
+                                <i class="far fa-star text-warning"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <span class="ms-1">{{ deal.rating }} {% if deal.review_count %}({{ deal.review_count }} reviews){% endif %}</span>
+                </div>
+                {% endif %}
+                
+                <div class="description mb-3">
+                    {{ deal.description }}
+                </div>
+                
+                {% if deal.key_features %}
+                <div class="key-features mb-3">
+                    <h6 class="fw-bold mb-2">Key Features:</h6>
+                    <ul class="list-group list-group-flush">
+                        {% for feature in deal.key_features %}
+                        <li class="list-group-item">
+                            <i class="fas fa-check-circle text-success me-2"></i> {{ feature }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+                {% if deal.delivery_time %}
+                <div class="delivery-info mb-3">
+                    <i class="fas fa-shipping-fast text-info me-2"></i> {{ deal.delivery_time }}
+                </div>
+                {% endif %}
+                
+                {% if deal.in_stock %}
+                <div class="stock-info text-success mb-3">
+                    <i class="fas fa-check-circle me-2"></i> In Stock
+                </div>
+                {% else %}
+                <div class="stock-info text-danger mb-3">
+                    <i class="fas fa-times-circle me-2"></i> Out of Stock
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="action-buttons text-center">
+                {% if deal.product_url %}
+                <a href="{{ deal.product_url }}" class="btn btn-primary btn-lg w-100 mb-2" target="_blank">
+                    <i class="fas fa-external-link-alt me-2"></i> Shop Now
+                </a>
+                {% endif %}
+                <a href="/all-deals?query={{ query }}{% if request.args.get('category') %}&category={{ request.args.get('category') }}{% endif %}" class="btn btn-outline-primary w-100">
+                    <i class="fas fa-search me-2"></i> Compare All Platform Deals
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Why This Deal Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-star me-2 text-warning"></i> Why This Is the Best Deal</h5>
+        </div>
+        <div class="card-body">
+            <ul class="why-best-deal-list">
+                <li><i class="fas fa-tags text-success me-2"></i> <strong>Exceptional Value:</strong> Price point is {{ deal.discount_percent }}% lower than average for this product.</li>
+                <li><i class="fas fa-certificate text-primary me-2"></i> <strong>Product Quality:</strong> High ratings from verified buyers.</li>
+                <li><i class="fas fa-truck text-info me-2"></i> <strong>Fast Shipping:</strong> {{ deal.delivery_time or 'Quick delivery options available' }}.</li>
+                <li><i class="fas fa-shield-alt text-secondary me-2"></i> <strong>Seller Reliability:</strong> Trusted platform with strong customer protection.</li>
+            </ul>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle me-2"></i> No super deal found for "{{ query }}". Please try another search.
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Super Deal Form Submission
+        const superDealForm = document.getElementById('superDealForm');
+        const findDealBtn = document.getElementById('findDealBtn');
+        
+        if (superDealForm) {
+            superDealForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const query = document.getElementById('dealQuery').value.trim();
+                if (!query) {
+                    showError('Please enter a product to search for');
+                    return;
+                }
+                
+                // Show loading state
+                findDealBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Searching...';
+                findDealBtn.disabled = true;
+                
+                // Submit the form
+                this.submit();
+            });
+        }
+        
+        // Add animations to Super Deal cards
+        const dealCards = document.querySelectorAll('.super-deal-card');
+        dealCards.forEach(card => {
+            card.style.transition = 'transform 0.2s ease';
+            card.addEventListener('click', function() {
+                window.location.href = '/super-deal?query=headphones'; // Example query
+            });
+            
+            card.addEventListener('mousedown', function() {
+                this.style.transform = 'scale(0.98)';
+            });
+            
+            card.addEventListener('mouseup', function() {
+                this.style.transform = 'scale(1)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    });
+</script>
+{% endblock %}

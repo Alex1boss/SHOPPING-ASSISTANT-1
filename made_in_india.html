@@ -1,0 +1,546 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}Made in India Products - ShopAI{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <header class="app-header">
+        <div class="back-button" onclick="history.back()">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <h1 class="page-title">Made in India</h1>
+    </header>
+
+    <div class="made-in-india-container">
+        <div class="india-banner">
+            <div class="india-flag">
+                <div class="flag-top"></div>
+                <div class="flag-middle">
+                    <div class="chakra"></div>
+                </div>
+                <div class="flag-bottom"></div>
+            </div>
+            <div class="india-banner-content">
+                <h2>Support Local Products</h2>
+                <p>Discover and shop authentic Indian products directly from local sellers, artisans, and manufacturers.</p>
+            </div>
+        </div>
+        
+        <div class="india-filters">
+            <button class="filter-button active" data-filter="all">All Products</button>
+            <button class="filter-button" data-filter="small_business">Small Businesses</button>
+            <button class="filter-button" data-filter="artisan">Artisans</button>
+            <button class="filter-button" data-filter="handmade">Handmade</button>
+        </div>
+        
+        {% if states %}
+            <div class="india-state-selector">
+                <label for="state-selector">Filter by State:</label>
+                <select id="state-selector">
+                    <option value="">All States</option>
+                    {% for state in states %}
+                        <option value="{{ state }}">{{ state }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% endif %}
+        
+        {% if india_products %}
+            <div class="products-grid" id="india-products-grid">
+                {% for product in india_products %}
+                    <div class="india-product-card" 
+                         data-seller-type="{{ product.seller_type }}" 
+                         data-craftsmanship="{{ product.craftsmanship_type }}"
+                         data-state="{{ product.state_of_origin }}">
+                        {% if product.is_verified %}
+                            <div class="verified-badge">
+                                <i class="fas fa-check-circle"></i> Verified
+                            </div>
+                        {% endif %}
+                        
+                        {% if product.image_url %}
+                            <div class="product-image">
+                                <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                            </div>
+                        {% else %}
+                            <div class="product-image product-placeholder">
+                                <i class="fas fa-box"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="product-content">
+                            <div class="product-origin">
+                                {% if product.state_of_origin %}
+                                    <span class="origin-state">{{ product.state_of_origin }}</span>
+                                {% endif %}
+                                
+                                {% if product.indian_brand %}
+                                    <span class="indian-brand-badge">
+                                        <i class="fas fa-store"></i> Indian Brand
+                                    </span>
+                                {% endif %}
+                            </div>
+                            
+                            <h3>{{ product.name }}</h3>
+                            <p class="product-platform">{{ product.platform }}</p>
+                            <p class="product-price">{{ format_price(product.price) }}</p>
+                            
+                            <div class="seller-info">
+                                <div class="seller-type">
+                                    <i class="fas fa-user"></i>
+                                    {% if product.seller_type == 'small_business' %}
+                                        Small Business
+                                    {% elif product.seller_type == 'artisan' %}
+                                        Artisan
+                                    {% elif product.seller_type == 'manufacturer' %}
+                                        Manufacturer
+                                    {% else %}
+                                        Seller
+                                    {% endif %}
+                                </div>
+                                
+                                {% if product.craftsmanship_type %}
+                                    <div class="craftsmanship-type">
+                                        {% if product.craftsmanship_type == 'handmade' %}
+                                            <i class="fas fa-hands"></i> Handmade
+                                        {% else %}
+                                            <i class="fas fa-cogs"></i> Machine-made
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            {% if product.traditional_significance %}
+                                <div class="traditional-significance">
+                                    <h4>Traditional Significance:</h4>
+                                    <p>{{ product.traditional_significance }}</p>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="materials-info">
+                                <span>{{ product.local_materials_percent }}% Local Materials</span>
+                                <div class="materials-bar">
+                                    <div class="materials-progress" style="width: {{ product.local_materials_percent }}%"></div>
+                                </div>
+                            </div>
+                            
+                            <a href="{{ product.product_url }}" class="product-action-button" target="_blank">
+                                View Product
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-store"></i>
+                <p>No Made in India products available at the moment. Check back soon for local products!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterButtons = document.querySelectorAll('.filter-button');
+        const stateSelector = document.getElementById('state-selector');
+        const productCards = document.querySelectorAll('.india-product-card');
+        
+        // Add filter functionality for buttons
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active class
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                applyFilters();
+            });
+        });
+        
+        // Add filter functionality for state selector
+        if (stateSelector) {
+            stateSelector.addEventListener('change', function() {
+                applyFilters();
+            });
+        }
+        
+        function applyFilters() {
+            const activeFilter = document.querySelector('.filter-button.active').getAttribute('data-filter');
+            const selectedState = stateSelector ? stateSelector.value : '';
+            
+            productCards.forEach(card => {
+                let showCard = true;
+                
+                // Apply seller type filter
+                if (activeFilter !== 'all') {
+                    const sellerType = card.getAttribute('data-seller-type');
+                    const craftsmanship = card.getAttribute('data-craftsmanship');
+                    
+                    if (activeFilter === 'handmade' && craftsmanship !== 'handmade') {
+                        showCard = false;
+                    } else if (activeFilter !== 'handmade' && sellerType !== activeFilter) {
+                        showCard = false;
+                    }
+                }
+                
+                // Apply state filter
+                if (showCard && selectedState && selectedState !== '') {
+                    const cardState = card.getAttribute('data-state');
+                    if (cardState !== selectedState) {
+                        showCard = false;
+                    }
+                }
+                
+                // Show or hide card
+                card.style.display = showCard ? 'block' : 'none';
+            });
+        }
+    });
+</script>
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .made-in-india-container {
+        padding: 20px;
+    }
+    
+    .india-banner {
+        display: flex;
+        align-items: center;
+        background-color: white;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .india-flag {
+        position: relative;
+        width: 60px;
+        height: 40px;
+        margin-right: 15px;
+        overflow: hidden;
+    }
+    
+    .flag-top {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 33.33%;
+        background-color: #FF9933; /* Saffron */
+    }
+    
+    .flag-middle {
+        position: absolute;
+        top: 33.33%;
+        left: 0;
+        width: 100%;
+        height: 33.33%;
+        background-color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .chakra {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 1px solid #000080; /* Navy Blue */
+        position: relative;
+    }
+    
+    .chakra::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 18px;
+        height: 18px;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(circle, transparent 0%, transparent 30%, #000080 30%, #000080 35%, transparent 35%);
+    }
+    
+    .flag-bottom {
+        position: absolute;
+        top: 66.66%;
+        left: 0;
+        width: 100%;
+        height: 33.33%;
+        background-color: #138808; /* Green */
+    }
+    
+    .india-banner-content {
+        flex: 1;
+    }
+    
+    .india-banner-content h2 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.5rem;
+        color: #333;
+    }
+    
+    .india-banner-content p {
+        margin: 0;
+        color: #666;
+    }
+    
+    .india-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .filter-button {
+        padding: 8px 16px;
+        border: none;
+        background-color: #f0f0f0;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    .filter-button.active {
+        background-color: #FF9933;
+        color: white;
+    }
+    
+    .india-state-selector {
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .india-state-selector label {
+        font-size: 0.9rem;
+        color: #666;
+    }
+    
+    .india-state-selector select {
+        padding: 8px 16px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        background-color: white;
+    }
+    
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+    }
+    
+    .india-product-card {
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        background-color: white;
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .india-product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+    
+    .verified-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: rgba(255,255,255,0.9);
+        color: #138808;
+        padding: 5px 10px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        font-size: 0.8rem;
+        font-weight: bold;
+        z-index: 1;
+    }
+    
+    .verified-badge i {
+        margin-right: 5px;
+    }
+    
+    .product-image {
+        height: 180px;
+        overflow: hidden;
+    }
+    
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .product-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f5f5f5;
+        color: #999;
+    }
+    
+    .product-placeholder i {
+        font-size: 3rem;
+    }
+    
+    .product-content {
+        padding: 15px;
+    }
+    
+    .product-origin {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .origin-state {
+        background-color: #f0f0f0;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        color: #666;
+    }
+    
+    .indian-brand-badge {
+        display: flex;
+        align-items: center;
+        font-size: 0.7rem;
+        color: #FF9933;
+        font-weight: bold;
+    }
+    
+    .indian-brand-badge i {
+        margin-right: 4px;
+    }
+    
+    .product-content h3 {
+        margin-top: 0;
+        margin-bottom: 8px;
+        font-size: 1.2rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .product-platform {
+        color: #666;
+        font-size: 0.8rem;
+        margin: 0 0 8px 0;
+    }
+    
+    .product-price {
+        font-weight: bold;
+        color: #333;
+        margin: 0 0 15px 0;
+        font-size: 1.2rem;
+    }
+    
+    .seller-info {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    
+    .seller-type, .craftsmanship-type {
+        display: flex;
+        align-items: center;
+        font-size: 0.8rem;
+        color: #666;
+        margin-bottom: 5px;
+    }
+    
+    .seller-type i, .craftsmanship-type i {
+        margin-right: 5px;
+        color: #FF9933;
+    }
+    
+    .traditional-significance {
+        background-color: rgba(255,153,51,0.1);
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+    
+    .traditional-significance h4 {
+        margin-top: 0;
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+    
+    .traditional-significance p {
+        margin: 0;
+        font-size: 0.8rem;
+        color: #777;
+    }
+    
+    .materials-info {
+        margin-bottom: 15px;
+    }
+    
+    .materials-info span {
+        font-size: 0.8rem;
+        color: #666;
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    .materials-bar {
+        height: 6px;
+        background-color: #f0f0f0;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+    
+    .materials-progress {
+        height: 100%;
+        background-color: #138808;
+        border-radius: 3px;
+    }
+    
+    .product-action-button {
+        display: block;
+        background-color: #FF9933;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: 500;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+    
+    .product-action-button:hover {
+        background-color: #e88a2d;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: #FF9933;
+        opacity: 0.5;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,546 @@
+{% extends 'base_mobile.html' %}
+
+{% block title %}ShopAI - Smart Shopping Assistant{% endblock %}
+
+{% block content %}
+<!-- Featured Product -->
+<div class="featured-product">
+    <div class="featured-badge">Best selling</div>
+    <h2 class="featured-title">realme P1 5G</h2>
+    <p class="featured-price">From ₹12,499*</p>
+    <span class="featured-badge">AMOLED all rounder</span>
+    <div class="mt-2">
+        <a href="/product/1" class="shop-now-btn">Shop Now</a>
+    </div>
+</div>
+
+<!-- Categories Grid -->
+<div class="categories-grid">
+    <a href="/search?category=mobiles" class="category-card">
+        <div class="category-icon mobiles">
+            <i class="fas fa-mobile-alt"></i>
+        </div>
+        <p class="category-name">Mobiles</p>
+    </a>
+    <a href="/search?category=electronics" class="category-card">
+        <div class="category-icon electronics">
+            <i class="fas fa-laptop"></i>
+        </div>
+        <p class="category-name">Electronics</p>
+    </a>
+    <a href="/search?category=home" class="category-card">
+        <div class="category-icon home">
+            <i class="fas fa-home"></i>
+        </div>
+        <p class="category-name">Home</p>
+    </a>
+    <a href="/search?category=fashion" class="category-card">
+        <div class="category-icon fashion">
+            <i class="fas fa-tshirt"></i>
+        </div>
+        <p class="category-name">Fashion</p>
+    </a>
+    <a href="/search?category=beauty" class="category-card">
+        <div class="category-icon beauty">
+            <i class="fas fa-spa"></i>
+        </div>
+        <p class="category-name">Beauty</p>
+    </a>
+    <a href="/search?category=jewelry" class="category-card">
+        <div class="category-icon jewelry">
+            <i class="fas fa-gem"></i>
+        </div>
+        <p class="category-name">2 Wheelers</p>
+    </a>
+</div>
+
+<!-- Find Your Perfect Product -->
+<div class="section-title">Find Your Perfect Product</div>
+
+<!-- Deal Buttons -->
+<div class="deals-buttons">
+    <a href="/super-deal" class="deal-button super-deal">
+        <i class="fas fa-bolt"></i> Find Super Deal
+    </a>
+    <a href="/all-deals" class="deal-button platform-deals">
+        <i class="fas fa-tags"></i> All Platform Deals
+    </a>
+    <a href="/trending" class="deal-button trending">
+        <i class="fas fa-fire"></i> Trending Deals
+    </a>
+    <button type="button" class="deal-button ai-trends" id="showTrendsBtn" data-bs-toggle="modal" data-bs-target="#aiTrendsModal" style="background-color: #8e44ad; color: white;">
+        <i class="fas fa-chart-line"></i> AI Price Trends
+    </button>
+</div>
+
+<!-- AI Trends Predictor Modal -->
+<div class="modal fade" id="aiTrendsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-chart-line text-primary me-2"></i> AI Price Trends Predictor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="productTypeSelect" class="form-label">Select Product Category</label>
+                    <select class="form-select" id="productTypeSelect">
+                        <option value="smartphones">Smartphones</option>
+                        <option value="laptops">Laptops</option>
+                        <option value="tvs">Smart TVs</option>
+                        <option value="audio">Audio Devices</option>
+                        <option value="wearables">Wearables</option>
+                    </select>
+                </div>
+                
+                <div class="trend-chart-container p-3 bg-light rounded mb-3" style="height: 200px; position: relative;">
+                    <div class="trend-prediction-loading text-center p-5" id="trendLoading">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Analyzing market data...</p>
+                    </div>
+                    
+                    <div id="trendChart" style="display: none; height: 100%;">
+                        <!-- Simplified chart representation -->
+                        <div class="position-relative h-100">
+                            <div class="trend-line position-absolute" style="bottom: 40px; left: 0; right: 0; height: 2px; background: #ddd;"></div>
+                            <div class="trend-point current position-absolute" style="bottom: 40px; left: 20%; width: 10px; height: 10px; background: #3498db; border-radius: 50%; transform: translate(-50%, 50%);"></div>
+                            <div class="trend-point future position-absolute" style="bottom: 70px; left: 50%; width: 10px; height: 10px; background: #2ecc71; border-radius: 50%; transform: translate(-50%, 50%);"></div>
+                            <div class="trend-point future position-absolute" style="bottom: 90px; left: 80%; width: 10px; height: 10px; background: #2ecc71; border-radius: 50%; transform: translate(-50%, 50%);"></div>
+                            
+                            <div class="trend-line-prediction position-absolute" style="bottom: 40px; left: 20%; width: 60%; height: 2px; background: linear-gradient(to right, #3498db, #2ecc71); transform-origin: left center; transform: rotate(-20deg);"></div>
+                            
+                            <div class="trend-label position-absolute" style="bottom: 10px; left: 20%; transform: translateX(-50%);">Now</div>
+                            <div class="trend-label position-absolute" style="bottom: 10px; left: 50%; transform: translateX(-50%);">3 Months</div>
+                            <div class="trend-label position-absolute" style="bottom: 10px; left: 80%; transform: translateX(-50%);">6 Months</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="trend-prediction-result mb-3 p-3 border rounded" id="trendResult" style="display: none;">
+                    <h6 class="text-primary mb-2">Prediction Results</h6>
+                    <p class="mb-2"><strong>Current Average Price:</strong> <span id="currentPrice">₹24,999</span></p>
+                    <p class="mb-2"><strong>3-Month Prediction:</strong> <span id="threeMonthPrice" class="text-success">₹21,499</span> <span class="badge bg-success">14% Drop</span></p>
+                    <p class="mb-0"><strong>6-Month Prediction:</strong> <span id="sixMonthPrice" class="text-success">₹18,999</span> <span class="badge bg-success">24% Drop</span></p>
+                </div>
+                
+                <div class="trend-recommendation p-3 bg-light rounded" id="trendRecommendation" style="display: none;">
+                    <h6 class="mb-2"><i class="fas fa-lightbulb text-warning me-2"></i> AI Recommendation</h6>
+                    <p class="mb-0">Based on historical data and upcoming product releases, we recommend <strong>waiting 3 months</strong> for the best deals on smartphones.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Set Price Alert</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Trending Deals Section -->
+<div class="section-title">
+    Trending Deals
+    <a href="/trending" class="view-all">VIEW ALL</a>
+</div>
+
+<!-- Trending Products Grid -->
+<div class="products-grid">
+    <!-- Product 1 -->
+    <div class="product-card">
+        <img src="https://via.placeholder.com/200x200?text=Samsung+Galaxy" class="product-image" alt="Samsung Galaxy">
+        <div class="product-content">
+            <span class="product-platform">Amazon</span>
+            <h3 class="product-title">SAMSUNG Galaxy F15 5G (Ash Black, 128 GB)</h3>
+            <div class="product-rating">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                </div>
+                4.5
+            </div>
+            <div class="product-price">₹11,999 <span class="product-original-price">₹14,999</span></div>
+            <div class="product-action">
+                <span class="discount-badge">20% OFF</span>
+                <button class="btn-cart">Buy Now</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Product 2 -->
+    <div class="product-card">
+        <img src="https://via.placeholder.com/200x200?text=boAt+Airdopes" class="product-image" alt="boAt Airdopes">
+        <div class="product-content">
+            <span class="product-platform">Flipkart</span>
+            <h3 class="product-title">boAt Airdopes 161 with 40 Hours Playback</h3>
+            <div class="product-rating">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                </div>
+                4.0
+            </div>
+            <div class="product-price">₹1,099 <span class="product-original-price">₹2,299</span></div>
+            <div class="product-action">
+                <span class="discount-badge">52% OFF</span>
+                <button class="btn-cart">Buy Now</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Product 3 -->
+    <div class="product-card">
+        <img src="https://via.placeholder.com/200x200?text=HP+Laptop" class="product-image" alt="HP Laptop">
+        <div class="product-content">
+            <span class="product-platform">Amazon</span>
+            <h3 class="product-title">HP Laptop 15s, 12th Gen Intel Core i3-1215U</h3>
+            <div class="product-rating">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                4.9
+            </div>
+            <div class="product-price">₹37,990 <span class="product-original-price">₹52,298</span></div>
+            <div class="product-action">
+                <span class="discount-badge">27% OFF</span>
+                <button class="btn-cart">Buy Now</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Product 4 -->
+    <div class="product-card">
+        <img src="https://via.placeholder.com/200x200?text=Smart+Watch" class="product-image" alt="Smart Watch">
+        <div class="product-content">
+            <span class="product-platform">Flipkart</span>
+            <h3 class="product-title">Fire-Boltt Phoenix Smart Watch</h3>
+            <div class="product-rating">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                </div>
+                4.2
+            </div>
+            <div class="product-price">₹1,499 <span class="product-original-price">₹3,999</span></div>
+            <div class="product-action">
+                <span class="discount-badge">63% OFF</span>
+                <button class="btn-cart">Buy Now</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upcoming Viral Products Section -->
+<div class="section-title">
+    <i class="fas fa-rocket text-danger me-2"></i> AI Predicts Future Viral Products
+    <a href="#" class="view-all" id="showViralProductsBtn" data-bs-toggle="modal" data-bs-target="#upcomingViralModal">VIEW ALL</a>
+</div>
+
+<!-- Viral Products Horizontal Scroll -->
+<div class="mx-3 mb-4">
+    <div class="viral-products-container p-3 rounded-3" style="background: linear-gradient(to right, #3a1c71, #d76d77, #ffaf7b); color: white;">
+        <div class="mb-3">
+            <h5 class="mb-1">Get Early Access to Future Hits</h5>
+            <p class="mb-0 small">Our AI predicts these products will go viral in the next 2-4 weeks</p>
+        </div>
+        
+        <div class="viral-products-scroll d-flex overflow-auto py-2" style="scrollbar-width: none; gap: 15px;">
+            <!-- Viral Product 1 -->
+            <div class="viral-product-card" style="min-width: 160px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 15px; backdrop-filter: blur(5px); cursor: pointer;" data-bs-toggle="modal" data-bs-target="#upcomingViralModal">
+                <div class="viral-badge mb-2 px-2 py-1 d-inline-block" style="background: rgba(255, 255, 255, 0.2); border-radius: 50px; font-size: 0.7rem;">
+                    <i class="fas fa-chart-line me-1"></i> 89% Chance
+                </div>
+                <div class="text-center mb-2">
+                    <img src="https://via.placeholder.com/120x120?text=VR+Headset" class="img-fluid rounded" style="max-height: 100px;" alt="VR Headset">
+                </div>
+                <h6 class="mb-1" style="font-size: 0.9rem;">Meta Quest 3 128GB VR Headset</h6>
+                <div class="mb-2" style="font-size: 0.8rem; opacity: 0.8;">Launching next week</div>
+                <div class="d-grid">
+                    <button class="btn btn-sm btn-light" onclick="event.stopPropagation()">Pre-Order</button>
+                </div>
+            </div>
+            
+            <!-- Viral Product 2 -->
+            <div class="viral-product-card" style="min-width: 160px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 15px; backdrop-filter: blur(5px); cursor: pointer;" data-bs-toggle="modal" data-bs-target="#upcomingViralModal">
+                <div class="viral-badge mb-2 px-2 py-1 d-inline-block" style="background: rgba(255, 255, 255, 0.2); border-radius: 50px; font-size: 0.7rem;">
+                    <i class="fas fa-chart-line me-1"></i> 94% Chance
+                </div>
+                <div class="text-center mb-2">
+                    <img src="https://via.placeholder.com/120x120?text=Smart+Speaker" class="img-fluid rounded" style="max-height: 100px;" alt="Smart Speaker">
+                </div>
+                <h6 class="mb-1" style="font-size: 0.9rem;">Echo Show 5 (3rd Gen)</h6>
+                <div class="mb-2" style="font-size: 0.8rem; opacity: 0.8;">Trending in 2 weeks</div>
+                <div class="d-grid">
+                    <button class="btn btn-sm btn-light" onclick="event.stopPropagation()">Priority Access</button>
+                </div>
+            </div>
+            
+            <!-- Viral Product 3 -->
+            <div class="viral-product-card" style="min-width: 160px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 15px; backdrop-filter: blur(5px); cursor: pointer;" data-bs-toggle="modal" data-bs-target="#upcomingViralModal">
+                <div class="viral-badge mb-2 px-2 py-1 d-inline-block" style="background: rgba(255, 255, 255, 0.2); border-radius: 50px; font-size: 0.7rem;">
+                    <i class="fas fa-chart-line me-1"></i> 78% Chance
+                </div>
+                <div class="text-center mb-2">
+                    <img src="https://via.placeholder.com/120x120?text=Earbuds" class="img-fluid rounded" style="max-height: 100px;" alt="Earbuds">
+                </div>
+                <h6 class="mb-1" style="font-size: 0.9rem;">Sony WF-1000XM5 Earbuds</h6>
+                <div class="mb-2" style="font-size: 0.8rem; opacity: 0.8;">Hot in 3-4 weeks</div>
+                <div class="d-grid">
+                    <button class="btn btn-sm btn-light" onclick="event.stopPropagation()">Get Notified</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upcoming Viral Products Modal -->
+<div class="modal fade" id="upcomingViralModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(to right, #3a1c71, #d76d77); color: white;">
+                <h5 class="modal-title"><i class="fas fa-rocket me-2"></i> Upcoming Viral Products</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">Our AI analyzes trends, social media mentions, and market data to predict products that will go viral in the coming weeks.</p>
+                
+                <div class="list-group mb-3">
+                    <!-- Viral Product List Item 1 -->
+                    <div class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+                        <img src="https://via.placeholder.com/100x100?text=VR+Headset" alt="VR Headset" style="width: 80px; height: 80px; object-fit: contain;">
+                        <div class="d-flex gap-2 w-100 justify-content-between">
+                            <div>
+                                <h6 class="mb-0">Meta Quest 3 128GB VR Headset</h6>
+                                <p class="mb-1 opacity-75">Next-gen VR gaming with mixed reality capabilities</p>
+                                <div>
+                                    <span class="badge bg-primary">89% Viral Chance</span>
+                                    <span class="badge bg-info">Launching in 1 week</span>
+                                </div>
+                            </div>
+                            <small class="opacity-50 text-nowrap">₹49,999</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Viral Product List Item 2 -->
+                    <div class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+                        <img src="https://via.placeholder.com/100x100?text=Smart+Speaker" alt="Smart Speaker" style="width: 80px; height: 80px; object-fit: contain;">
+                        <div class="d-flex gap-2 w-100 justify-content-between">
+                            <div>
+                                <h6 class="mb-0">Echo Show 5 (3rd Gen)</h6>
+                                <p class="mb-1 opacity-75">Compact smart display with improved audio quality</p>
+                                <div>
+                                    <span class="badge bg-primary">94% Viral Chance</span>
+                                    <span class="badge bg-info">Trending in 2 weeks</span>
+                                </div>
+                            </div>
+                            <small class="opacity-50 text-nowrap">₹6,999</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Viral Product List Item 3 -->
+                    <div class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+                        <img src="https://via.placeholder.com/100x100?text=Earbuds" alt="Earbuds" style="width: 80px; height: 80px; object-fit: contain;">
+                        <div class="d-flex gap-2 w-100 justify-content-between">
+                            <div>
+                                <h6 class="mb-0">Sony WF-1000XM5 Earbuds</h6>
+                                <p class="mb-1 opacity-75">Industry-leading noise cancellation and battery life</p>
+                                <div>
+                                    <span class="badge bg-primary">78% Viral Chance</span>
+                                    <span class="badge bg-info">Hot in 3-4 weeks</span>
+                                </div>
+                            </div>
+                            <small class="opacity-50 text-nowrap">₹24,990</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Viral Product List Item 4 -->
+                    <div class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+                        <img src="https://via.placeholder.com/100x100?text=Smart+Ring" alt="Smart Ring" style="width: 80px; height: 80px; object-fit: contain;">
+                        <div class="d-flex gap-2 w-100 justify-content-between">
+                            <div>
+                                <h6 class="mb-0">Samsung Galaxy Ring</h6>
+                                <p class="mb-1 opacity-75">Health tracking in a sleek, comfortable form factor</p>
+                                <div>
+                                    <span class="badge bg-warning text-dark">72% Viral Chance</span>
+                                    <span class="badge bg-info">Predicted in 4 weeks</span>
+                                </div>
+                            </div>
+                            <small class="opacity-50 text-nowrap">₹29,990</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info d-flex align-items-center" role="alert">
+                    <i class="fas fa-info-circle flex-shrink-0 me-2"></i>
+                    <div>
+                        Enable notifications to be alerted when these products launch or when prices drop.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Enable Alerts</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Category card animations
+        const categoryCards = document.querySelectorAll('.category-card');
+        categoryCards.forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'translateY(-5px)';
+                }, 100);
+            });
+        });
+        
+        // Product card animations
+        const productCards = document.querySelectorAll('.product-card');
+        productCards.forEach(card => {
+            card.addEventListener('click', function() {
+                window.location.href = "/product/1"; // Replace with actual product ID
+            });
+        });
+        
+        // Buy Now button functionality
+        const buyButtons = document.querySelectorAll('.btn-cart');
+        buyButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent triggering the card click
+                showSuccess('Product added to cart!');
+            });
+        });
+        
+        // AI Trends Predictor modal functionality
+        const showTrendsBtn = document.getElementById('showTrendsBtn');
+        const aiTrendsModal = new bootstrap.Modal(document.getElementById('aiTrendsModal'));
+        
+        if (showTrendsBtn) {
+            showTrendsBtn.addEventListener('click', function() {
+                aiTrendsModal.show();
+                
+                // Simulate loading
+                const trendLoading = document.getElementById('trendLoading');
+                const trendChart = document.getElementById('trendChart');
+                const trendResult = document.getElementById('trendResult');
+                const trendRecommendation = document.getElementById('trendRecommendation');
+                
+                setTimeout(() => {
+                    if (trendLoading) trendLoading.style.display = 'none';
+                    if (trendChart) trendChart.style.display = 'block';
+                    
+                    // After a delay, show the results
+                    setTimeout(() => {
+                        if (trendResult) trendResult.style.display = 'block';
+                        if (trendRecommendation) trendRecommendation.style.display = 'block';
+                    }, 500);
+                }, 2000);
+            });
+        }
+        
+        // Product type selection in AI Trends modal
+        const productTypeSelect = document.getElementById('productTypeSelect');
+        if (productTypeSelect) {
+            productTypeSelect.addEventListener('change', function() {
+                const selectedOption = this.value;
+                const trendLoading = document.getElementById('trendLoading');
+                const trendChart = document.getElementById('trendChart');
+                const trendResult = document.getElementById('trendResult');
+                const trendRecommendation = document.getElementById('trendRecommendation');
+                
+                // Reset and show loading
+                if (trendLoading) trendLoading.style.display = 'block';
+                if (trendChart) trendChart.style.display = 'none';
+                if (trendResult) trendResult.style.display = 'none';
+                if (trendRecommendation) trendRecommendation.style.display = 'none';
+                
+                // Update the prices based on selection
+                setTimeout(() => {
+                    const currentPrice = document.getElementById('currentPrice');
+                    const threeMonthPrice = document.getElementById('threeMonthPrice');
+                    const sixMonthPrice = document.getElementById('sixMonthPrice');
+                    
+                    if (selectedOption === 'smartphones') {
+                        if (currentPrice) currentPrice.textContent = '₹24,999';
+                        if (threeMonthPrice) threeMonthPrice.textContent = '₹21,499';
+                        if (sixMonthPrice) sixMonthPrice.textContent = '₹18,999';
+                    } else if (selectedOption === 'laptops') {
+                        if (currentPrice) currentPrice.textContent = '₹56,999';
+                        if (threeMonthPrice) threeMonthPrice.textContent = '₹52,499';
+                        if (sixMonthPrice) sixMonthPrice.textContent = '₹48,999';
+                    } else if (selectedOption === 'tvs') {
+                        if (currentPrice) currentPrice.textContent = '₹42,999';
+                        if (threeMonthPrice) threeMonthPrice.textContent = '₹37,499';
+                        if (sixMonthPrice) sixMonthPrice.textContent = '₹34,999';
+                    } else if (selectedOption === 'audio') {
+                        if (currentPrice) currentPrice.textContent = '₹8,999';
+                        if (threeMonthPrice) threeMonthPrice.textContent = '₹7,499';
+                        if (sixMonthPrice) sixMonthPrice.textContent = '₹6,499';
+                    } else if (selectedOption === 'wearables') {
+                        if (currentPrice) currentPrice.textContent = '₹12,999';
+                        if (threeMonthPrice) threeMonthPrice.textContent = '₹10,499';
+                        if (sixMonthPrice) sixMonthPrice.textContent = '₹8,999';
+                    }
+                    
+                    // Show the chart after loading
+                    if (trendLoading) trendLoading.style.display = 'none';
+                    if (trendChart) trendChart.style.display = 'block';
+                    
+                    // After a delay, show the results
+                    setTimeout(() => {
+                        if (trendResult) trendResult.style.display = 'block';
+                        if (trendRecommendation) trendRecommendation.style.display = 'block';
+                    }, 500);
+                }, 1500);
+            });
+        }
+        
+        // Upcoming Viral Products modal
+        const showViralProductsBtn = document.getElementById('showViralProductsBtn');
+        const upcomingViralModal = new bootstrap.Modal(document.getElementById('upcomingViralModal'));
+        
+        if (showViralProductsBtn) {
+            showViralProductsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                upcomingViralModal.show();
+            });
+        }
+        
+        // Viral product card functionality
+        const viralProductCards = document.querySelectorAll('.viral-product-card');
+        viralProductCards.forEach(card => {
+            card.addEventListener('click', function() {
+                upcomingViralModal.show();
+            });
+            
+            // Get the button inside each card
+            const cardButton = card.querySelector('button');
+            if (cardButton) {
+                cardButton.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent the card click event
+                    showSuccess('You will be notified when this product launches!');
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}
